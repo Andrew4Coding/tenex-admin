@@ -1,0 +1,755 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model AdWatchHistory {
+  id               String         @id
+  userPlaygroundId String
+  adId             String
+  watchedAt        DateTime
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime
+  Advertisement    Advertisement  @relation(fields: [adId], references: [id])
+  UserPlayground   UserPlayground @relation(fields: [userPlaygroundId], references: [id], onDelete: Cascade)
+}
+
+model AdWatchSession {
+  id               String         @id
+  userPlaygroundId String
+  adId             String
+  adLength         Int
+  startTimeUnix    Int
+  lockUntil        Int
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime
+  Advertisement    Advertisement  @relation(fields: [adId], references: [id])
+  UserPlayground   UserPlayground @relation(fields: [userPlaygroundId], references: [id], onDelete: Cascade)
+}
+
+model Advertisement {
+  id             String           @id
+  contentUrl     String
+  isVideo        Boolean
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime
+  contentLength  Int
+  AdWatchHistory AdWatchHistory[]
+  AdWatchSession AdWatchSession[]
+}
+
+model Announcement {
+  id          String   @id
+  title       String
+  description String
+  programId   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime
+  Program     Program  @relation(fields: [programId], references: [id])
+}
+
+model Article {
+  id          String   @id
+  title       String
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime
+  url         String
+  imageUrl    String?
+}
+
+model CVClinicClaim {
+  id               String           @id
+  userId           String           @unique
+  status           CV_STATUS        @default(PENDING)
+  usedVoucherCode  String
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime
+  CVClinicVouchers CVClinicVouchers @relation(fields: [usedVoucherCode], references: [code], onDelete: Cascade)
+  user             user             @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model CVClinicVouchers {
+  code          String          @id
+  CVClinicClaim CVClinicClaim[]
+}
+
+model DashboardNotification {
+  id                            String                          @id
+  title                         String
+  createdAt                     DateTime                        @default(now())
+  updatedAt                     DateTime
+  content                       String
+  isPrivate                     Boolean                         @default(false)
+  type                          PROGRAM_CODE
+  DashboardNotificationUserRead DashboardNotificationUserRead[]
+  user                          user[]
+}
+
+model DashboardNotificationUserRead {
+  id                    String                @id
+  isOpened              Boolean
+  userId                String
+  notificationId        String
+  createdAt             DateTime              @default(now())
+  updatedAt             DateTime
+  DashboardNotification DashboardNotification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+  user                  user                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, notificationId])
+}
+
+model Event {
+  id                String              @id
+  name              String              @unique
+  createdAt         DateTime            @default(now())
+  eventType         EVENT_TYPE          @unique
+  updatedAt         DateTime
+  description       String?
+  EventDate         EventDate[]
+  EventRegistration EventRegistration[]
+  Feedback          Feedback?
+}
+
+model EventDate {
+  id          String    @id
+  name        String
+  eventId     String
+  endDate     DateTime?
+  startDate   DateTime
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime
+  description String?
+  Event       Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+}
+
+model EventRegistration {
+  id                         String                      @id
+  eventId                    String
+  userId                     String
+  createdAt                  DateTime                    @default(now())
+  updatedAt                  DateTime
+  Event                      Event                       @relation(fields: [eventId], references: [id])
+  UserData                   UserData                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  GrandLaunchingRegistration GrandLaunchingRegistration?
+}
+
+model Exhibitor {
+  id          String   @id
+  companyName String   @db.VarChar(50)
+  name        String   @db.VarChar(50)
+  email       String   @db.VarChar(50)
+  phoneNumber String   @db.VarChar(50)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime
+}
+
+model ExploreITFunfact {
+  id        String   @id
+  imageUrl  String   @db.VarChar(255)
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+  title     String   @default("") @db.VarChar(100)
+}
+
+model Feedback {
+  id                 String               @id
+  eventId            String               @unique
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime
+  isOpen             Boolean              @default(true)
+  Event              Event                @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  FeedbackQuestion   FeedbackQuestion[]
+  FeedbackSubmission FeedbackSubmission[]
+}
+
+model FeedbackOption {
+  id               String           @id
+  questionId       String
+  stringAnswer     String?
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime
+  FeedbackQuestion FeedbackQuestion @relation(fields: [questionId], references: [id])
+}
+
+model FeedbackQuestion {
+  id             String           @id
+  question       String
+  questionType   QuestionType
+  feedbackId     String
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime
+  FeedbackOption FeedbackOption[]
+  Feedback       Feedback         @relation(fields: [feedbackId], references: [id])
+}
+
+model FeedbackSubmission {
+  id         String   @id
+  feedbackId String
+  userId     String
+  answerJson Json
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime
+  Feedback   Feedback @relation(fields: [feedbackId], references: [id])
+  UserData   UserData @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Game {
+  id                  String                @id
+  name                String                @db.VarChar(30)
+  arcadeCode          String                @unique @db.VarChar(50)
+  arcadeUrl           String                @db.VarChar(255)
+  isGetPoint          Boolean
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime
+  description         String?
+  rules               String?
+  orientation         GameOrientation       @default(HORIZONTAL)
+  GameDeveloper       GameDeveloper[]
+  GameRule            GameRule[]
+  UserPlayGameHistory UserPlayGameHistory[]
+}
+
+model GameDeveloper {
+  id           String   @id
+  name         String   @db.VarChar(50)
+  description  String?
+  imageUrl     String?
+  instagramUrl String?
+  linkedInUrl  String?
+  gameId       String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime
+  Game         Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+}
+
+model GameRule {
+  id        String   @id
+  gameId    String
+  title     String?
+  rule      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+  Game      Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+}
+
+model GrandLaunchingRegistration {
+  id                  String            @id
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime
+  knowEventSource     KNOW_EVENT_SOURCE
+  eventRegistrationId String            @unique
+  EventRegistration   EventRegistration @relation(fields: [eventRegistrationId], references: [id], onDelete: Cascade)
+}
+
+model LeaderBoardHistory {
+  id        String   @id
+  jsonData  Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+}
+
+model Member {
+  id        String   @id
+  isLeader  Boolean  @default(false)
+  userId    String
+  teamId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+  Team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user      user     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, teamId])
+}
+
+model MiniQuiz {
+  id               String             @id
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime
+  quizName         String?
+  MiniQuizAttempt  MiniQuizAttempt[]
+  MiniQuizQuestion MiniQuizQuestion[]
+}
+
+model MiniQuizAttempt {
+  id          String   @id
+  quizId      String
+  userId      String
+  answerJson  Json
+  attemptedAt DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime
+  MiniQuiz    MiniQuiz @relation(fields: [quizId], references: [id])
+  UserData    UserData @relation(fields: [userId], references: [id])
+}
+
+model MiniQuizQuestion {
+  id        String   @id
+  question  String
+  isTrue    Boolean
+  createdAt DateTime @default(now())
+  quizId    String
+  updatedAt DateTime
+  MiniQuiz  MiniQuiz @relation(fields: [quizId], references: [id])
+}
+
+model Nominee {
+  id                                                     String        @id
+  type                                                   NOMINEE_TYPE
+  name                                                   String
+  developer                                              String
+  description                                            String
+  isActive                                               Boolean       @default(true)
+  point                                                  Int           @default(0)
+  createdAt                                              DateTime      @default(now())
+  updatedAt                                              DateTime
+  thumbnailUrl                                           String[]
+  url                                                    String[]
+  NomineeVote_NomineeVote_firstChoiceNomineeIdToNominee  NomineeVote[] @relation("NomineeVote_firstChoiceNomineeIdToNominee")
+  NomineeVote_NomineeVote_secondChoiceNomineeIdToNominee NomineeVote[] @relation("NomineeVote_secondChoiceNomineeIdToNominee")
+  NomineeVote_NomineeVote_thirdChoiceNomineeIdToNominee  NomineeVote[] @relation("NomineeVote_thirdChoiceNomineeIdToNominee")
+}
+
+model NomineeVote {
+  id                                                 String       @id
+  type                                               NOMINEE_TYPE
+  firstChoiceNomineeId                               String?
+  secondChoiceNomineeId                              String?
+  thirdChoiceNomineeId                               String?
+  userId                                             String
+  createdAt                                          DateTime     @default(now())
+  updatedAt                                          DateTime
+  Nominee_NomineeVote_firstChoiceNomineeIdToNominee  Nominee?     @relation("NomineeVote_firstChoiceNomineeIdToNominee", fields: [firstChoiceNomineeId], references: [id])
+  Nominee_NomineeVote_secondChoiceNomineeIdToNominee Nominee?     @relation("NomineeVote_secondChoiceNomineeIdToNominee", fields: [secondChoiceNomineeId], references: [id])
+  Nominee_NomineeVote_thirdChoiceNomineeIdToNominee  Nominee?     @relation("NomineeVote_thirdChoiceNomineeIdToNominee", fields: [thirdChoiceNomineeId], references: [id])
+  user                                               user         @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model PlaygroundExpenseHistory {
+  id               String         @id
+  userPlaygroundId String
+  description      String         @default("Expense History")
+  amount           Int
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime
+  UserPlayground   UserPlayground @relation(fields: [userPlaygroundId], references: [id], onDelete: Cascade)
+}
+
+model PlaygroundRewardHistory {
+  id               String         @id
+  userPlaygroundId String
+  description      String         @default("Reward History")
+  rewardType       RewardType
+  amount           Int
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime
+  UserPlayground   UserPlayground @relation(fields: [userPlaygroundId], references: [id], onDelete: Cascade)
+}
+
+model PlaygroundToken {
+  id                  String                @id
+  userPlaygroundId    String
+  isUsed              Boolean
+  usedAt              DateTime?
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime
+  expiredAt           DateTime?
+  tokenType           TOKEN_TYPE
+  code                String                @unique @db.VarChar(6)
+  UserPlayground      UserPlayground        @relation(fields: [userPlaygroundId], references: [id], onDelete: Cascade)
+  UserPlayGameHistory UserPlayGameHistory[]
+}
+
+model Program {
+  id                     String                @id
+  code                   PROGRAM_CODE          @unique
+  type                   PROGRAM_TYPE
+  minAge                 Int                   @default(17)
+  maxAge                 Int                   @default(25)
+  allowedEducationLevel  String[]              @default([])
+  minMember              Int                   @default(1)
+  maxMember              Int                   @default(3)
+  isAbleToRegisterAsTeam Boolean               @default(false)
+  name                   String
+  logoUrl                String?
+  paymentBills           Int?
+  startDate              DateTime?             @db.Timestamptz(6)
+  extendStartDate        DateTime?             @db.Timestamptz(6)
+  endDate                DateTime?             @db.Timestamptz(6)
+  guideBookUrl           String?
+  assignmentUrl          String?
+  coordinationGroupUrl   String?
+  about                  String
+  timeline               Json[]                @default([])
+  testimony              Json[]                @default([])
+  FAQ                    Json[]                @default([])
+  contactPerson          Json[]                @default([])
+  content                Json?
+  createdAt              DateTime              @default(now())
+  updatedAt              DateTime
+  Announcement           Announcement[]
+  ProgramRegistration    ProgramRegistration[]
+  SingleParticipant      SingleParticipant[]
+  Team                   Team[]
+  ProgramTask            ProgramTask[]
+}
+
+model ProgramRegistration {
+  id        String   @id
+  programId String
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+  Program   Program  @relation(fields: [programId], references: [id])
+  user      user     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ProgramTask {
+  id                          String                        @id
+  title                       String
+  deadline                    DateTime                      @db.Timestamptz(6)
+  description                 String
+  guideBookUrl                String?
+  type                        PROGRAM_TASK_TYPE             @default(TEAM)
+  createdAt                   DateTime                      @default(now())
+  updatedAt                   DateTime
+  acceptedFileTypes           FILE_TYPE[]                   @default([ZIP])
+  ProgramTaskExtraDescription ProgramTaskExtraDescription[]
+  ProgramTaskSubmission       ProgramTaskSubmission[]
+  Program                     Program[]
+}
+
+model ProgramTaskExtraDescription {
+  id          String       @id
+  taskId      String
+  description String
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime
+  forProgram  PROGRAM_CODE
+  ProgramTask ProgramTask  @relation(fields: [taskId], references: [id], onDelete: Cascade)
+}
+
+model ProgramTaskSubmission {
+  id                   String            @id
+  fileUrl              String
+  fileName             String
+  status               SUBMISSION_STATUS @default(PENDING)
+  feedback             String?
+  taskId               String
+  teamId               String?
+  userId               String?
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime
+  submissionForProgram PROGRAM_CODE?
+  ProgramTask          ProgramTask       @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  Team                 Team?             @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user                 user?             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([taskId, teamId, submissionForProgram])
+  @@unique([taskId, userId, submissionForProgram])
+}
+
+model Project {
+  id          String   @id
+  name        String
+  type        String
+  imageUrl    String
+  description String
+  youtubeUrl  String
+  teamName    String
+  votes       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime
+}
+
+model ReferalCodeUsage {
+  id                                              String   @id
+  provideById                                     String
+  usedById                                        String
+  createdAt                                       DateTime @default(now())
+  updatedAt                                       DateTime
+  isValidated                                     Boolean  @default(false)
+  UserData_ReferalCodeUsage_provideByIdToUserData UserData @relation("ReferalCodeUsage_provideByIdToUserData", fields: [provideById], references: [id], onDelete: Cascade)
+  UserData_ReferalCodeUsage_usedByIdToUserData    UserData @relation("ReferalCodeUsage_usedByIdToUserData", fields: [usedById], references: [id], onDelete: Cascade)
+}
+
+model SingleParticipant {
+  id        String   @id
+  userId    String
+  programId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+  Program   Program  @relation(fields: [programId], references: [id])
+  user      user     @relation(fields: [userId], references: [id])
+}
+
+model Team {
+  id                    String                  @id
+  status                TEAM_STATUS             @default(WAITING_FOR_VERIFICATION)
+  name                  String
+  programId             String
+  createdAt             DateTime                @default(now())
+  updatedAt             DateTime
+  code                  String                  @unique
+  notes                 String?
+  Member                Member[]
+  ProgramTaskSubmission ProgramTaskSubmission[]
+  Program               Program                 @relation(fields: [programId], references: [id])
+}
+
+model UserData {
+  id                                                      String               @id
+  avatar                                                  Int                  @default(0)
+  createdAt                                               DateTime             @default(now())
+  updatedAt                                               DateTime
+  userId                                                  String               @unique
+  jobInstitution                                          String?
+  lineId                                                  String?
+  phoneNumber                                             String?
+  birthDate                                               DateTime?
+  domicile                                                String?
+  lastEducation                                           String?
+  isBanned                                                Boolean              @default(false)
+  isStaff                                                 Boolean              @default(false)
+  referalCode                                             String?
+  currentSemester                                         Int?
+  discordId                                               String?
+  EventRegistration                                       EventRegistration[]
+  FeedbackSubmission                                      FeedbackSubmission[]
+  MiniQuizAttempt                                         MiniQuizAttempt[]
+  ReferalCodeUsage_ReferalCodeUsage_provideByIdToUserData ReferalCodeUsage[]   @relation("ReferalCodeUsage_provideByIdToUserData")
+  ReferalCodeUsage_ReferalCodeUsage_usedByIdToUserData    ReferalCodeUsage[]   @relation("ReferalCodeUsage_usedByIdToUserData")
+  user                                                    user                 @relation(fields: [userId], references: [id], onDelete: Cascade, map: "User_userId_fkey")
+}
+
+model UserPlayGameHistory {
+  id               String          @id
+  userPlaygroundId String
+  gameId           String
+  tokenUsedId      String
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime
+  finishedAt       DateTime?
+  isFinished       Boolean         @default(false)
+  Game             Game            @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  PlaygroundToken  PlaygroundToken @relation(fields: [tokenUsedId], references: [id], onDelete: Cascade)
+  UserPlayground   UserPlayground  @relation(fields: [userPlaygroundId], references: [id], onDelete: Cascade)
+}
+
+model UserPlayground {
+  id                       String                     @id
+  userId                   String                     @unique
+  username                 String
+  virtualPoint             Int                        @default(0)
+  createdAt                DateTime                   @default(now())
+  updatedAt                DateTime
+  AdWatchHistory           AdWatchHistory[]
+  AdWatchSession           AdWatchSession[]
+  PlaygroundExpenseHistory PlaygroundExpenseHistory[]
+  PlaygroundRewardHistory  PlaygroundRewardHistory[]
+  PlaygroundToken          PlaygroundToken[]
+  UserPlayGameHistory      UserPlayGameHistory[]
+  user                     user                       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  UserPlaygroundDetention  UserPlaygroundDetention?
+}
+
+model UserPlaygroundDetention {
+  id               String          @id
+  userPlaygroundId String          @unique
+  description      String
+  penaltyPoint     Int
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime
+  isRead           Boolean         @default(false)
+  state            DETENTION_STATE @default(FIRST)
+  UserPlayground   UserPlayground  @relation(fields: [userPlaygroundId], references: [id], onDelete: Cascade)
+}
+
+model account {
+  id                    String    @id
+  scope                 String?
+  password              String?
+  accessToken           String?
+  accessTokenExpiresAt  DateTime?
+  accountId             String
+  createdAt             DateTime
+  idToken               String?
+  providerId            String
+  refreshToken          String?
+  refreshTokenExpiresAt DateTime?
+  updatedAt             DateTime
+  userId                String
+  user                  user      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model rateLimit {
+  id          String  @id
+  key         String?
+  count       Int?
+  lastRequest BigInt?
+}
+
+model session {
+  id        String   @id
+  token     String   @unique
+  createdAt DateTime
+  expiresAt DateTime
+  ipAddress String?
+  updatedAt DateTime
+  userAgent String?
+  userId    String
+  user      user     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model user {
+  id                            String                          @id
+  email                         String                          @unique
+  image                         String?
+  name                          String
+  emailVerified                 Boolean
+  createdAt                     DateTime
+  updatedAt                     DateTime
+  CVClinicClaim                 CVClinicClaim?
+  DashboardNotificationUserRead DashboardNotificationUserRead[]
+  Member                        Member[]
+  NomineeVote                   NomineeVote[]
+  ProgramRegistration           ProgramRegistration[]
+  ProgramTaskSubmission         ProgramTaskSubmission[]
+  SingleParticipant             SingleParticipant[]
+  UserData                      UserData?
+  UserPlayground                UserPlayground?
+  account                       account[]
+  session                       session[]
+  DashboardNotification         DashboardNotification[]
+}
+
+model verification {
+  id         String    @id
+  identifier String
+  value      String
+  createdAt  DateTime?
+  expiresAt  DateTime
+  updatedAt  DateTime?
+}
+
+enum ACADEMY_TYPE {
+  SEA
+  PMA
+  UXA
+  DSA
+}
+
+enum CV_STATUS {
+  PENDING
+  REVIEWED
+  CANCELLED
+}
+
+enum DETENTION_STATE {
+  FIRST
+  SECOND
+  THIRD
+}
+
+enum EVENT_TYPE {
+  GRAND_LAUNCHING
+  XCELERATE
+  XCELERATE_FOUNDATION
+  MAIN_EVENT
+  COMPFEST_TALKS
+}
+
+enum FILE_TYPE {
+  PDF
+  DOCX
+  PPTX
+  ZIP
+  RAR
+  IMAGE
+  VIDEO
+}
+
+enum GameOrientation {
+  VERTICAL
+  HORIZONTAL
+}
+
+enum INVITATION_STATUS {
+  PENDING
+  DECLINED
+  ACCEPTED
+}
+
+enum KNOW_EVENT_SOURCE {
+  INSTAGRAM
+  WEBSITE
+  FRIENDS
+  TIKTOK
+  LINKEDIN
+  OTHERS
+}
+
+enum NOMINEE_TYPE {
+  IGI
+  AIC
+}
+
+enum PROGRAM_CODE {
+  LANDING
+  SEA
+  UXA
+  DSA
+  PMA
+  IGI
+  SCPC
+  JCPC
+  AIC
+  BIZZIT
+  CTF
+  DAD
+  GAMEJAM
+  MINICASE
+}
+
+enum PROGRAM_TASK_TYPE {
+  TEAM
+  PERSONAL
+}
+
+enum PROGRAM_TYPE {
+  ACADEMY
+  COMPETITION
+}
+
+enum QuestionType {
+  STRING
+  BOOLEAN
+  NUMBER
+}
+
+enum RewardType {
+  TOKEN
+  POINT
+}
+
+enum SUBMISSION_STATUS {
+  PENDING
+  REJECTED
+  ACCEPTED
+}
+
+enum TEAM_STATUS {
+  WAITING_FOR_VERIFICATION
+  VERIFIED
+  VERIFICATION_FAILED
+}
+
+enum TOKEN_TYPE {
+  WHEEL
+  GAME
+}
