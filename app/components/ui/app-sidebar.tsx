@@ -1,5 +1,5 @@
 
-import { Box, Settings, User } from "lucide-react";
+import { Box, Code2, Settings, User } from "lucide-react";
 import { Link } from "react-router";
 import {
     Sidebar,
@@ -26,8 +26,8 @@ export function AppSidebar({models}: {models?: string[]}) {
                                 <SidebarMenuItem>
                                     <SidebarMenuButton asChild>
                                         <Link to="/query">
-                                            <Box />
-                                            <span>Raw Query</span>
+                                            <Code2 />
+                                            <span>Query Playground</span>
                                         </Link>
                                     </SidebarMenuButton>
                                 </SidebarMenuItem>

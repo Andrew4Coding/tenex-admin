@@ -26,12 +26,14 @@ export type DataTableProps<T> = {
   onTakeChange?: (take: number) => void;
   search?: string;
   onSearchChange?: (value: string) => void;
+
+  isSearchDisabled?: boolean; // Optional prop to disable search
 };
 
-export function DataTable<T extends Record<string, any>>({ data, className, pagination, onPageChange, onTakeChange, search, onSearchChange }: DataTableProps<T>) {
+export function DataTable<T extends Record<string, any>>({ data, className, pagination, onPageChange, onTakeChange, search, onSearchChange, isSearchDisabled = false }: DataTableProps<T>) {
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
-  const [filters, setFilters] = useState<Record<string, string>>({});
+  const [filters] = useState<Record<string, string>>({});
   const [isPending, startTransition] = useTransition();
   const [showLoader, setShowLoader] = useState(false);
   const loaderTimeout = useRef<NodeJS.Timeout | null>(null);
@@ -113,13 +115,16 @@ export function DataTable<T extends Record<string, any>>({ data, className, pagi
     <div className={cn(className, 'flex flex-col overflow-auto w-full relative')}> {/* root is flex column, fills parent */}
 
       <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-4 flex-shrink-0">
-        <Input
-          placeholder="Search..."
-          value={search || ''}
-          onChange={e => onSearchChange && onSearchChange(e.target.value)}
-          className="max-w-xs"
-          disabled={showLoader}
-        />
+        {
+          !isSearchDisabled &&
+          <Input
+            placeholder="Search..."
+            value={search || ''}
+            onChange={e => onSearchChange && onSearchChange(e.target.value)}
+            className="max-w-xs"
+            disabled={showLoader}
+          />
+        }
         {showLoader && (
           <div className=" top-0 z-20 flex items-center gap-2 p-2 transition-opacity duration-1000">
             <Loader className="animate-spin w-5 h-5 text-primary" />
@@ -259,16 +264,16 @@ export function DataTable<T extends Record<string, any>>({ data, className, pagi
               </PaginationLink>
             </PaginationItem>
             <PaginationItem>
-             <Select value={String(pagination.take)} onValueChange={val => handleTakeChange(Number(val))}>
-               <SelectTrigger className="ml-4 w-24">
-                 <SelectValue />
-               </SelectTrigger>
-               <SelectContent>
-                 {[5, 10, 20, 50, 100].map(n => (
-                   <SelectItem key={n} value={String(n)}>{n}</SelectItem>
-                 ))}
-               </SelectContent>
-             </Select>
+              <Select value={String(pagination.take)} onValueChange={val => handleTakeChange(Number(val))}>
+                <SelectTrigger className="ml-4 w-24">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {[5, 10, 20, 50, 100].map(n => (
+                    <SelectItem key={n} value={String(n)}>{n}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </PaginationItem>
           </PaginationContent>
         </Pagination>

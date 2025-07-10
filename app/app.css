@@ -41,6 +41,7 @@
   --color-sidebar-ring: var(--sidebar-ring);
 
   --font-tiktok: 'Tiktok Sans', sans-serif;
+  --font-jetbrains: 'JetBrains Mono', monospace;
 }
 
 :root {
