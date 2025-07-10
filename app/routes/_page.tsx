@@ -1,9 +1,10 @@
 import { PrismaClient } from '@prisma/client';
-import { Loader } from 'lucide-react';
-import { isRouteErrorResponse, Outlet, useLoaderData, useNavigation } from 'react-router';
+import { Loader, RefreshCcw } from 'lucide-react';
+import { isRouteErrorResponse, Link, Outlet, useLoaderData, useNavigate, useNavigation } from 'react-router';
 import { Toaster } from 'sonner';
 import { ThemeProvider } from '~/components/context/theme-provider';
 import { AppSidebar } from '~/components/ui/app-sidebar';
+import { Button } from '~/components/ui/button';
 import { SidebarProvider, SidebarTrigger } from '~/components/ui/sidebar';
 import { ThemeToggler } from '~/components/ui/ThemeToggler';
 import type { Route } from '../+types/root';
@@ -41,7 +42,7 @@ export default function PageLayout() {
               </div>
             </div>
           )}
-          <div className='p-4 w-full h-full max-h-screen overflow-hidden'>
+          <div className='p-4 w-full h-full max-h-screen overflow-hidden space-y-2'>
             <div className='w-full flex justify-end'>
               <ThemeToggler />
             </div>
@@ -72,6 +73,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   }
 
   const contextData = useLoaderData<typeof loader>();
+  const navigate = useNavigate();
 
   return (
     <ThemeProvider>
@@ -81,7 +83,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
             models={contextData.models}
           />
           <SidebarTrigger />
-          <div className='p-4 w-full h-full max-h-screen overflow-hidden'>
+          <div className='p-4 w-full h-full max-h-screen overflow-hidden space-y-2'>
             <div className='w-full flex justify-end'>
               <ThemeToggler />
             </div>
@@ -95,6 +97,18 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
                   {stack}
                 </pre>
               )}
+
+              <div className='grid grid-cols-2 gap-4'>
+                <Button variant='outline' onClick={() => navigate(0)} className='w-full'>
+                  <RefreshCcw />
+                  Reload
+                </Button>
+                <Link to={'/'}>
+                  <Button className='w-full'>
+                    I don't give a f*ck
+                  </Button>
+                </Link>
+              </div>
             </div>
           </div>
           <Toaster />
