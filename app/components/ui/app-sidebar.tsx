@@ -117,19 +117,19 @@ export function AppSidebar({ models }: { models?: string[] }) {
                     </div>
                     <div>
                         <SidebarGroupLabel>Database Models</SidebarGroupLabel>
+                        <div className="mb-2">
+                            <Input
+                                ref={inputRef}
+                                placeholder="Search models..."
+                                value={search}
+                                onChange={e => setSearch(e.target.value)}
+                                onKeyDown={handleKeyDown}
+                                onBlur={handleBlur}
+                                className="text-sm"
+                                autoComplete="off"
+                            />
+                        </div>
                         <SidebarGroupContent className="max-h-96 overflow-auto pr-2">
-                            <div className="mb-2">
-                                <Input
-                                    ref={inputRef}
-                                    placeholder="Search models..."
-                                    value={search}
-                                    onChange={e => setSearch(e.target.value)}
-                                    onKeyDown={handleKeyDown}
-                                    onBlur={handleBlur}
-                                    className="text-sm"
-                                    autoComplete="off"
-                                />
-                            </div>
                             <SidebarMenu>
                                 {filteredModels.length === 0 ? (
                                     <div className="px-3 py-2 text-muted-foreground text-sm">No models found</div>

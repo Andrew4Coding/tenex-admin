@@ -1,5 +1,6 @@
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon, Loader, Trash2 } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState, useTransition } from 'react';
+import { Link } from 'react-router';
 import { cn } from '~/lib/utils';
 import { Button } from './button';
 import { Checkbox } from './checkbox';
@@ -219,11 +220,40 @@ export function DataTable<T extends Record<string, any>>({ data, className, pagi
                       aria-label="Select row"
                     />
                   </td>
-                  {columns.map(key => (
-                    <td key={key} className="px-4 py-2 whitespace-nowrap text-sm">
-                      {String(row[key] ?? '')}
-                    </td>
-                  ))}
+                  {columns.map(key => {
+                    const value = row[key];
+                    let displayValue: string;
+                    if (typeof value === 'object' && value !== null) {
+                      displayValue = JSON.stringify(value);
+                    } else {
+                      displayValue = String(value ?? '');
+                    }
+                    const isLong = displayValue.length > 100;
+                    const shownValue = isLong ? displayValue.slice(0, 100) + '…' : displayValue;
+                    let cellContent;
+                    if (typeof value === 'string' && value.startsWith('https://')) {
+                      cellContent = (
+                        <Link
+                          to={value}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-300 underline hover:text-blue-500 duration-300 transition-all underline-offset-2"
+                          title={displayValue}
+                        >
+                          {shownValue}
+                        </Link>
+                      );
+                    } else {
+                      cellContent = (
+                        <span title={displayValue}>{shownValue}</span>
+                      );
+                    }
+                    return (
+                      <td key={key} className="px-4 py-2 whitespace-nowrap text-sm max-w-[400px] overflow-hidden text-ellipsis">
+                        {cellContent}
+                      </td>
+                    );
+                  })}
                   {onSingleDelete && (
                     <td className="px-2 py-2">
                       <Button variant="ghost" size="icon" onClick={() => onSingleDelete(String(row[idKey]))}>
