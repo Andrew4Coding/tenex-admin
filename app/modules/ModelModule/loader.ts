@@ -40,6 +40,10 @@ export async function ModelLoader({ request, params }: LoaderFunctionArgs) {
     }
   })
 
+  const stringFields = cleanedField
+    .filter((field) => field.kind === 'scalar' && field.type === 'String')
+    .map((field) => field.name);
+
   const modelFindMany = await (prisma as any)[model].findMany({
     orderBy: {
       createdAt: "desc",
@@ -48,7 +52,7 @@ export async function ModelLoader({ request, params }: LoaderFunctionArgs) {
     skip: (page - 1) * take,
     where: search
       ? {
-        OR: fields.map((field) => ({
+        OR: stringFields.map((field) => ({
           [field]: {
             contains: search,
             mode: "insensitive",
@@ -57,6 +61,23 @@ export async function ModelLoader({ request, params }: LoaderFunctionArgs) {
       }
       : undefined,
   });
+
+  // Pagination info
+  const totalCount = await (prisma as any)[model].count({
+    where: search
+      ? {
+        OR: stringFields.map((field) => ({
+          [field]: {
+            contains: search,
+            mode: "insensitive",
+          },
+        })),
+      }
+      : undefined,
+  });
+  const totalPages = Math.ceil(totalCount / take);
+  const hasNextPage = page < totalPages;
+  const hasPrevPage = page > 1;
 
   let objectFields = modelMetadata.fields.filter((field) => field.kind === 'object');
 
@@ -91,5 +112,13 @@ export async function ModelLoader({ request, params }: LoaderFunctionArgs) {
     modelFindMany,
     modelMetadata,
     modelFields: cleanedField,
+    pagination: {
+      totalCount,
+      page,
+      take,
+      totalPages,
+      hasNextPage,
+      hasPrevPage,
+    },
   };
 }

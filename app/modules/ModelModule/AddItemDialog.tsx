@@ -1,19 +1,19 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { XIcon, ChevronsUpDownIcon, CheckIcon } from 'lucide-react';
+import { CheckIcon, ChevronsUpDownIcon, Plus, XIcon } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '~/components/ui/command';
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '~/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
+import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select';
-import { Popover, PopoverTrigger, PopoverContent } from '~/components/ui/popover';
-import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem } from '~/components/ui/command';
 import { generateSchema } from '~/lib/gen-schema';
-import type { prismaModelField } from '~/types';
 import { cn } from '~/lib/utils';
+import type { prismaModelField } from '~/types';
 
 export function AddItemDialog({ modelFields, modelName, onSuccess }: {
   modelFields: prismaModelField[];
@@ -70,7 +70,10 @@ export function AddItemDialog({ modelFields, modelName, onSuccess }: {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="default">Add Item</Button>
+        <Button variant="default">
+          <Plus />  
+          Add Item
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

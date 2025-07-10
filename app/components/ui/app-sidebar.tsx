@@ -20,6 +20,22 @@ export function AppSidebar({models}: {models?: string[]}) {
             <SidebarContent className="p-4">
                 <SidebarGroup className="gap-8">
                     <div>
+                        <SidebarGroupLabel>Utils</SidebarGroupLabel>
+                        <SidebarGroupContent className="max-h-96 overflow-auto">
+                            <SidebarMenu>
+                                <SidebarMenuItem>
+                                    <SidebarMenuButton asChild>
+                                        <Link to="/query">
+                                            <Box />
+                                            <span>Raw Query</span>
+                                        </Link>
+                                    </SidebarMenuButton>
+                                </SidebarMenuItem>
+                            </SidebarMenu>
+                        </SidebarGroupContent>
+                    </div>
+
+                    <div>
                         <SidebarGroupLabel>Database Models</SidebarGroupLabel>
                         <SidebarGroupContent className="max-h-96 overflow-auto">
                             <SidebarMenu>
