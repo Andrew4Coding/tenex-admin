@@ -1,4 +1,6 @@
 
+import { Box, Settings, User } from "lucide-react";
+import { Link } from "react-router";
 import {
     Sidebar,
     SidebarContent,
@@ -15,27 +17,52 @@ import { Button } from "./button";
 export function AppSidebar({models}: {models?: string[]}) {
     return (
         <Sidebar>
-            <SidebarContent>
-                <SidebarGroup>
-                    <SidebarGroupLabel>Database Models</SidebarGroupLabel>
-                    <SidebarGroupContent className="max-h-96 overflow-auto">
-                        <SidebarMenu>
-                            {models?.map((model) => (
-                                <SidebarMenuItem key={model}>
+            <SidebarContent className="p-4">
+                <SidebarGroup className="gap-8">
+                    <div>
+                        <SidebarGroupLabel>Database Models</SidebarGroupLabel>
+                        <SidebarGroupContent className="max-h-96 overflow-auto">
+                            <SidebarMenu>
+                                {models?.map((model) => (
+                                    <SidebarMenuItem key={model}>
+                                        <SidebarMenuButton asChild>
+                                            <Link to={`/${model}`}>
+                                                <Box />
+                                                <span>{model}</span>
+                                            </Link>
+                                        </SidebarMenuButton>
+                                    </SidebarMenuItem>
+                                ))}
+                            </SidebarMenu>
+                        </SidebarGroupContent>
+                    </div>
+
+                    <div>
+                        <SidebarGroupLabel>Settings</SidebarGroupLabel>
+                        <SidebarGroupContent>
+                            <SidebarMenu>
+                                <SidebarMenuItem>
                                     <SidebarMenuButton asChild>
-                                        <a href={`/${model}`}>
-                                            <span>{model}</span>
-                                        </a>
+                                        <Link to="/settings">
+                                            <Settings />
+                                            <span>Settings</span>
+                                        </Link>
                                     </SidebarMenuButton>
                                 </SidebarMenuItem>
-                            ))}
-                        </SidebarMenu>
-                    </SidebarGroupContent>
-
-                    <SidebarGroupLabel>Settings</SidebarGroupLabel>
+                                <SidebarMenuItem>
+                                    <SidebarMenuButton asChild>
+                                        <Link to="/profile">
+                                            <User />
+                                            <span>Profile</span>
+                                        </Link>
+                                    </SidebarMenuButton>
+                                </SidebarMenuItem>
+                            </SidebarMenu>
+                        </SidebarGroupContent>
+                    </div>
                 </SidebarGroup>
             </SidebarContent>
-            <SidebarFooter>
+            <SidebarFooter className="p-4">
                 <Button>
                     Log Out
                 </Button>
