@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
-import { isRouteErrorResponse, Outlet, useLoaderData } from 'react-router';
+import { Loader } from 'lucide-react';
+import { isRouteErrorResponse, Outlet, useLoaderData, useNavigation } from 'react-router';
 import { Toaster } from 'sonner';
 import { ThemeProvider } from '~/components/context/theme-provider';
 import { AppSidebar } from '~/components/ui/app-sidebar';
@@ -12,7 +13,7 @@ export async function loader() {
   const prisma = new PrismaClient();
   const query: { table_name: string }[] = await prisma.$queryRaw`SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'`;
 
-  const models = query.map((item) => item.table_name);
+  const models = query.map((item) => item.table_name).filter((name) => !name.startsWith('_') && name !== 'migrations' && name !== 'prisma_migrations');
 
   return {
     models
@@ -21,6 +22,8 @@ export async function loader() {
 
 export default function PageLayout() {
   const contextData = useLoaderData<typeof loader>();
+  const navigation = useNavigation();
+  const isLoading = navigation.state !== 'idle';
 
   return (
     <ThemeProvider>
@@ -30,6 +33,14 @@ export default function PageLayout() {
             models={contextData.models}
           />
           <SidebarTrigger />
+          {/* Page Loader Overlay */}
+          {isLoading && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 pointer-events-none transition-opacity animate-fade-in" >
+              <div className="bg-white dark:bg-zinc-900 rounded-full p-6 shadow-lg flex items-center justify-center">
+                <Loader className="w-10 h-10 text-primary animate-spin" />
+              </div>
+            </div>
+          )}
           <div className='p-4 w-full h-full max-h-screen overflow-hidden'>
             <div className='w-full flex justify-end'>
               <ThemeToggler />

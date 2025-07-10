@@ -1,6 +1,8 @@
-import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon, Loader } from 'lucide-react';
+import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon, Loader, Trash2 } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState, useTransition } from 'react';
 import { cn } from '~/lib/utils';
+import { Button } from './button';
+import { Checkbox } from './checkbox';
 import { Input } from './input';
 import {
   Pagination,
@@ -26,17 +28,24 @@ export type DataTableProps<T> = {
   onTakeChange?: (take: number) => void;
   search?: string;
   onSearchChange?: (value: string) => void;
-
-  isSearchDisabled?: boolean; // Optional prop to disable search
+  isSearchDisabled?: boolean;
+  onBulkDelete?: (ids: string[]) => void;
+  onSingleDelete?: (id: string) => void;
 };
 
-export function DataTable<T extends Record<string, any>>({ data, className, pagination, onPageChange, onTakeChange, search, onSearchChange, isSearchDisabled = false }: DataTableProps<T>) {
+export function DataTable<T extends Record<string, any>>({ data, className, pagination, onPageChange, onTakeChange, search, onSearchChange, isSearchDisabled = false, onBulkDelete, onSingleDelete }: DataTableProps<T>) {
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
   const [filters] = useState<Record<string, string>>({});
   const [isPending, startTransition] = useTransition();
   const [showLoader, setShowLoader] = useState(false);
   const loaderTimeout = useRef<NodeJS.Timeout | null>(null);
+  const [selected, setSelected] = useState<string[]>([]);
+  const idKey = data && data.length > 0 ? Object.keys(data[0])[0] : 'id';
+  const allIds = data.map(row => String(row[idKey]));
+  const allSelected = selected.length === allIds.length && allIds.length > 0;
+  const isIndeterminate = selected.length > 0 && selected.length < allIds.length;
+  const selectAllRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
     if (isPending) {
@@ -111,10 +120,18 @@ export function DataTable<T extends Record<string, any>>({ data, className, pagi
     }
   };
 
+  useEffect(() => {
+    if (selectAllRef.current) {
+      // Find the input element inside the Radix Checkbox button
+      const input = selectAllRef.current.querySelector('input[type="checkbox"]') as HTMLInputElement | null;
+      if (input) input.indeterminate = isIndeterminate;
+    }
+  }, [isIndeterminate]);
+
   return (
     <div className={cn(className, 'flex flex-col overflow-auto w-full relative')}> {/* root is flex column, fills parent */}
 
-      <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-4 flex-shrink-0">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-4 flex-shrink-0">
         {
           !isSearchDisabled &&
           <Input
@@ -125,6 +142,17 @@ export function DataTable<T extends Record<string, any>>({ data, className, pagi
             disabled={showLoader}
           />
         }
+        {/* Bulk delete bar */}
+        {selected.length > 0 && (
+          <div className="flex items-center gap-2">
+            <span className='text-sm'>{selected.length} selected</span>
+            {onBulkDelete && (
+              <Button variant="destructive" size="sm" onClick={() => onBulkDelete(selected)}>
+                <Trash2 className="w-4 h-4 mr-1" /> Bulk Delete
+              </Button>
+            )}
+          </div>
+        )}
         {showLoader && (
           <div className=" top-0 z-20 flex items-center gap-2 p-2 transition-opacity duration-1000">
             <Loader className="animate-spin w-5 h-5 text-primary" />
@@ -136,6 +164,20 @@ export function DataTable<T extends Record<string, any>>({ data, className, pagi
         <table className="min-w-full divide-y divide-border h-full">
           <thead className="bg-muted sticky top-0 z-10">
             <tr>
+              <th className="px-2 py-2 text-left">
+                <Checkbox
+                  ref={selectAllRef}
+                  checked={allSelected}
+                  onCheckedChange={checked => {
+                    if (checked) {
+                      setSelected(allIds);
+                    } else {
+                      setSelected([]);
+                    }
+                  }}
+                  aria-label="Select all rows"
+                />
+              </th>
               {columns.map(key => (
                 <th
                   key={key}
@@ -156,6 +198,7 @@ export function DataTable<T extends Record<string, any>>({ data, className, pagi
           <tbody className="divide-y divide-border">
             {filteredData.length === 0 ? (
               <tr>
+                <td />
                 <td colSpan={columns.length} className="text-center py-8 text-muted-foreground">
                   No data found.
                 </td>
@@ -163,11 +206,31 @@ export function DataTable<T extends Record<string, any>>({ data, className, pagi
             ) : (
               filteredData.map((row, i) => (
                 <tr key={i} className="hover:bg-accent/30">
+                  <td className="px-2 py-2">
+                    <Checkbox
+                      checked={selected.includes(String(row[idKey]))}
+                      onCheckedChange={checked => {
+                        if (checked) {
+                          setSelected(prev => [...prev, String(row[idKey])]);
+                        } else {
+                          setSelected(prev => prev.filter(id => id !== String(row[idKey])));
+                        }
+                      }}
+                      aria-label="Select row"
+                    />
+                  </td>
                   {columns.map(key => (
                     <td key={key} className="px-4 py-2 whitespace-nowrap text-sm">
                       {String(row[key] ?? '')}
                     </td>
                   ))}
+                  {onSingleDelete && (
+                    <td className="px-2 py-2">
+                      <Button variant="ghost" size="icon" onClick={() => onSingleDelete(String(row[idKey]))}>
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </td>
+                  )}
                 </tr>
               ))
             )}
