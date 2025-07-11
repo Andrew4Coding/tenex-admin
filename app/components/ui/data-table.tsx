@@ -2,6 +2,7 @@ import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon, Load
 import { useEffect, useMemo, useRef, useState, useTransition } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { cn } from '~/lib/utils';
+import type { prismaModelField } from '~/types';
 import { Badge } from './badge';
 import { Button } from './button';
 import { Checkbox } from './checkbox';
@@ -14,7 +15,6 @@ import {
   PaginationLink
 } from './pagination';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select';
-import type { prismaModelField } from '~/types';
 
 export type DataTableProps<T> = {
   data: T[];
@@ -36,9 +36,10 @@ export type DataTableProps<T> = {
   isSearchDisabled?: boolean;
   onBulkDelete?: (ids: string[]) => void;
   onSingleDelete?: (id: string) => void;
+  onSelectionReset?: () => void;
 };
 
-export function DataTable<T extends Record<string, any>>({ data, className, modelName, modelFields, pagination, onPageChange, onTakeChange, search, onSearchChange, isSearchDisabled = false, onBulkDelete, onSingleDelete }: DataTableProps<T>) {
+export function DataTable<T extends Record<string, any>>({ data, className, modelName, modelFields, pagination, onPageChange, onTakeChange, search, onSearchChange, isSearchDisabled = false, onBulkDelete, onSingleDelete, onSelectionReset }: DataTableProps<T>) {
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
   const [filters] = useState<Record<string, string>>({});
@@ -152,6 +153,14 @@ export function DataTable<T extends Record<string, any>>({ data, className, mode
     }
   }, [isIndeterminate]);
 
+  // Reset selection when data changes (after deletion)
+  useEffect(() => {
+    if (selected.length > 0) {
+      setSelected([]);
+      onSelectionReset?.();
+    }
+  }, [data, onSelectionReset]);
+
   return (
     <div className={cn(className, 'flex flex-col overflow-auto w-full relative')}> {/* root is flex column, fills parent */}
 
@@ -172,7 +181,7 @@ export function DataTable<T extends Record<string, any>>({ data, className, mode
             <span className='text-sm'>{selected.length} selected</span>
             {onBulkDelete && (
               <Button variant="destructive" size="sm" onClick={() => onBulkDelete(selected)}>
-                <Trash2 className="w-4 h-4 mr-1" /> Bulk Delete
+                <Trash2 className="w-4 h-4 mr-1" /> {selected.length === 1 ? 'Delete' : 'Bulk Delete'}
               </Button>
             )}
           </div>
@@ -199,6 +208,7 @@ export function DataTable<T extends Record<string, any>>({ data, className, mode
                       setSelected([]);
                     }
                   }}
+                  onClick={(e) => e.stopPropagation()}
                   aria-label="Select all rows"
                 />
               </th>
@@ -217,13 +227,18 @@ export function DataTable<T extends Record<string, any>>({ data, className, mode
                   </div>
                 </th>
               ))}
+              {onSingleDelete && (
+                <th className="px-2 py-2 text-left text-xs font-semibold uppercase tracking-wider bg-muted" style={{ position: 'sticky', top: 0, background: 'inherit' }}>
+                  Actions
+                </th>
+              )}
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
             {filteredData.length === 0 ? (
               <tr>
                 <td />
-                <td colSpan={columns.length} className="text-center py-8 text-muted-foreground">
+                <td colSpan={columns.length + (onSingleDelete ? 1 : 0)} className="text-center py-8 text-muted-foreground">
                   No data found.
                 </td>
               </tr>
@@ -247,6 +262,7 @@ export function DataTable<T extends Record<string, any>>({ data, className, mode
                           setSelected(prev => prev.filter(id => id !== String(row[idKey])));
                         }
                       }}
+                      onClick={(e) => e.stopPropagation()}
                       aria-label="Select row"
                     />
                   </td>
@@ -326,7 +342,14 @@ export function DataTable<T extends Record<string, any>>({ data, className, mode
                   })}
                   {onSingleDelete && (
                     <td className="px-2 py-2">
-                      <Button variant="ghost" size="icon" onClick={() => onSingleDelete(String(row[idKey]))}>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onSingleDelete(String(row[idKey]));
+                        }}
+                      >
                         <Trash2 className="w-4 h-4" />
                       </Button>
                     </td>

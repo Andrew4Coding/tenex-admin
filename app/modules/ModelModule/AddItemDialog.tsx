@@ -1,7 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CheckIcon, ChevronsUpDownIcon, Plus, XIcon } from 'lucide-react';
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useFetcher, useRevalidator } from 'react-router';
+import { toast } from 'sonner';
 import { z } from 'zod';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
@@ -10,9 +12,11 @@ import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogT
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
+import { ScrollArea } from '~/components/ui/scroll-area';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select';
 import { generateSchema } from '~/lib/gen-schema';
 import { cn } from '~/lib/utils';
+import { useDebounce } from '~/hooks/use-debounce';
 import type { prismaModelField } from '~/types';
 
 export function AddItemDialog({ modelFields, modelName, onSuccess }: {
@@ -21,9 +25,62 @@ export function AddItemDialog({ modelFields, modelName, onSuccess }: {
   onSuccess?: () => void;
 }) {
   const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [schema, setSchema] = useState<z.ZodObject<any>>();
+  const [foreignKeyOptions, setForeignKeyOptions] = useState<Record<string, string[]>>({});
+  const [foreignKeySearch, setForeignKeySearch] = useState<Record<string, string>>({});
+  const [foreignKeyLoading, setForeignKeyLoading] = useState<Record<string, boolean>>({});
+  const fetcher = useFetcher();
+  const revalidator = useRevalidator();
+
+  // Remove createdAt and updatedAt
+  const filteredFields = modelFields.filter(field => field.name !== 'createdAt' && field.name !== 'updatedAt');
+
+  // Identify foreign key fields (scalar fields with more than 20 options)
+  const foreignKeyFields = filteredFields.filter(field => 
+    field.kind === 'scalar' && 
+    Array.isArray(field.options) && 
+    field.options.length > 20
+  );
+
+  // Debounced search for foreign key fields
+  const debouncedSearch = useDebounce(foreignKeySearch, 300);
+
+  // Fetch foreign key options
+  const fetchForeignKeyOptions = useCallback(async (fieldName: string, search: string) => {
+    console.log("HELLO!");
+    
+    try {
+      setForeignKeyLoading(prev => ({ ...prev, [fieldName]: true }));
+      const formData = new FormData();
+      formData.append('modelField', fieldName);
+      formData.append('modelName', modelName);
+      formData.append('search', search);
+
+      const response = await fetch('/api/options', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setForeignKeyOptions(prev => ({
+          ...prev,
+          [fieldName]: data.options || []
+        }));
+      }
+    } catch (error) {
+      console.error('Error fetching foreign key options:', error);
+    } finally {
+      setForeignKeyLoading(prev => ({ ...prev, [fieldName]: false }));
+    }
+  }, [modelName]);
+
+  // Effect to fetch options when search changes
+  useEffect(() => {
+    Object.entries(debouncedSearch).forEach(([fieldName, search]) => {
+      fetchForeignKeyOptions(fieldName, search);
+    });
+  }, [debouncedSearch, fetchForeignKeyOptions]);
 
   // Generate Zod schema from modelFields
   useState(() => {
@@ -32,7 +89,7 @@ export function AddItemDialog({ modelFields, modelName, onSuccess }: {
 
   const form = useForm({
     resolver: schema ? zodResolver(schema) : undefined,
-    defaultValues: modelFields.reduce((acc, field) => {
+    defaultValues: filteredFields.reduce((acc, field) => {
       if (field.name === 'id') {
         acc[field.name] = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() :
           'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -48,24 +105,28 @@ export function AddItemDialog({ modelFields, modelName, onSuccess }: {
   });
 
   const onSubmit = async (values: any) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch(`/models/${modelName}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(values),
-      });
-      if (!res.ok) throw new Error('Failed to add item');
-      setOpen(false);
-      form.reset();
-      onSuccess?.();
-    } catch (e: any) {
-      setError(e.message || 'Unknown error');
-    } finally {
-      setLoading(false);
-    }
+    const formData = new FormData();
+    formData.append('intent', 'create');
+    formData.append('model', modelName);
+    formData.append('data', JSON.stringify(values));
+    
+    fetcher.submit(formData, { method: 'post' });
   };
+
+  // Handle fetcher response
+  useEffect(() => {
+    if (fetcher.data) {
+      if (fetcher.data.success) {
+        toast.success('Item added successfully!');
+        setOpen(false);
+        form.reset();
+        onSuccess?.();
+        revalidator.revalidate();
+      } else {
+        toast.error(fetcher.data.error || 'An error occurred while adding the item.');
+      }
+    }
+  }, [fetcher.data]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -81,9 +142,9 @@ export function AddItemDialog({ modelFields, modelName, onSuccess }: {
         </DialogHeader>
         {schema ? (
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <div className='max-h-[70vh] overflow-auto grid grid-cols-2 gap-4'>
-                {modelFields.map((field) => (
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 w-full">
+              <div className='max-h-[70vh] overflow-auto grid grid-cols-1 sm:grid-cols-2 gap-4 w-full'>
+                {filteredFields.map((field) => (
                   <FormField
                     key={field.name}
                     name={field.name}
@@ -92,9 +153,14 @@ export function AddItemDialog({ modelFields, modelName, onSuccess }: {
                       // Local state for badge input
                       const [inputValue, setInputValue] = useState('');
                       return (
-                        <FormItem>
-                          <FormLabel>{field.name}</FormLabel>
-                          <FormControl>
+                        <FormItem className="w-full">
+                          <FormLabel className="text-sm">
+                            {field.name}
+                            {foreignKeyFields.some(fk => fk.name === field.name) && (
+                              <Badge variant="outline" className="ml-2 text-xs">FK</Badge>
+                            )}
+                          </FormLabel>
+                          <FormControl className="w-full">
                             {field.isList && field.type === 'String' ? (
                               <div>
                                 <div className="flex flex-wrap gap-2 mb-2">
@@ -128,7 +194,8 @@ export function AddItemDialog({ modelFields, modelName, onSuccess }: {
                                     }
                                   }}
                                   placeholder="Type and press Enter or comma to add"
-                                  disabled={loading}
+                                  disabled={fetcher.state === 'submitting'}
+                                  className="w-full"
                                 />
                               </div>
                             ) : field.kind === 'enum' && field.options ? (
@@ -159,24 +226,26 @@ export function AddItemDialog({ modelFields, modelName, onSuccess }: {
                                         <CommandList>
                                           <CommandEmpty>No value found.</CommandEmpty>
                                           <CommandGroup>
-                                            {options.map((option: string) => (
-                                              <CommandItem
-                                                key={option}
-                                                value={option}
-                                                onSelect={() => {
-                                                  f.onChange(option);
-                                                  setOpen(false);
-                                                }}
-                                              >
-                                                <CheckIcon
-                                                  className={cn(
-                                                    "mr-2 h-4 w-4",
-                                                    selected === option ? "opacity-100" : "opacity-0"
-                                                  )}
-                                                />
-                                                {option}
-                                              </CommandItem>
-                                            ))}
+                                            <ScrollArea className="h-64">
+                                              {options.map((option: string) => (
+                                                <CommandItem
+                                                  key={option}
+                                                  value={option}
+                                                  onSelect={() => {
+                                                    f.onChange(option);
+                                                    setOpen(false);
+                                                  }}
+                                                >
+                                                  <CheckIcon
+                                                    className={cn(
+                                                      "mr-2 h-4 w-4",
+                                                      selected === option ? "opacity-100" : "opacity-0"
+                                                    )}
+                                                  />
+                                                  {option}
+                                                </CommandItem>
+                                              ))}
+                                            </ScrollArea>
                                           </CommandGroup>
                                         </CommandList>
                                       </Command>
@@ -186,9 +255,11 @@ export function AddItemDialog({ modelFields, modelName, onSuccess }: {
                               })()
                             ) : field.kind === 'scalar' && Array.isArray(field.options) && field.options.length > 0 ? (
                               (() => {
-                                const options = field.options;
+                                const isForeignKey = foreignKeyFields.some(fk => fk.name === field.name);
+                                const options = isForeignKey ? (foreignKeyOptions[field.name] ?? []) : field.options;
                                 const selected = String(f.value ?? '');
                                 const [open, setOpen] = useState(false);
+                                const loading = isForeignKey ? foreignKeyLoading[field.name] : false;
                                 return (
                                   <Popover open={open} onOpenChange={setOpen}>
                                     <PopoverTrigger asChild>
@@ -200,36 +271,58 @@ export function AddItemDialog({ modelFields, modelName, onSuccess }: {
                                         type="button"
                                         tabIndex={0}
                                       >
-                                        {selected
-                                          ? options.find((option: string) => option === selected)
-                                          : `Select ID`}
+                                        <span className='max-w-[150px] text-ellipsis line-clamp-1'>
+                                          {selected
+                                            ? options.find((option: string) => option === selected)
+                                            : `Select ${isForeignKey ? 'Foreign Key' : 'ID'}`}
+                                        </span>
                                         <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                       </Button>
                                     </PopoverTrigger>
                                     <PopoverContent className="w-full p-0">
                                       <Command>
-                                        <CommandInput placeholder="Search id..." />
+                                        {isForeignKey ? (
+                                          <CommandInput
+                                            placeholder={`Search foreign key...`}
+                                            value={foreignKeySearch[field.name] || ''}
+                                            onValueChange={(value) => {
+                                              setForeignKeySearch(prev => ({
+                                                ...prev,
+                                                [field.name]: value
+                                              }));
+                                            }}
+                                          />
+                                        ) : (
+                                          <CommandInput placeholder={`Search id...`} />
+                                        )}
                                         <CommandList>
-                                          <CommandEmpty>No id found.</CommandEmpty>
+                                          {loading && (
+                                            <div className="p-2 text-xs text-muted-foreground">Loading...</div>
+                                          )}
+                                          <CommandEmpty>No {isForeignKey ? 'foreign key' : 'id'} found.</CommandEmpty>
                                           <CommandGroup>
-                                            {options.map((option: string) => (
-                                              <CommandItem
-                                                key={option}
-                                                value={option}
-                                                onSelect={() => {
-                                                  f.onChange(option);
-                                                  setOpen(false);
-                                                }}
-                                              >
-                                                <CheckIcon
-                                                  className={cn(
-                                                    "mr-2 h-4 w-4",
-                                                    selected === option ? "opacity-100" : "opacity-0"
-                                                  )}
-                                                />
-                                                {option}
-                                              </CommandItem>
-                                            ))}
+                                            <ScrollArea className="h-64">
+                                              {options.map((option: string) => (
+                                                <CommandItem
+                                                  key={option}
+                                                  value={option}
+                                                  onSelect={() => {
+                                                    f.onChange(option);
+                                                    setOpen(false);
+                                                  }}
+                                                >
+                                                  <CheckIcon
+                                                    className={cn(
+                                                      "mr-2 h-4 w-4",
+                                                      selected === option ? "opacity-100" : "opacity-0"
+                                                    )}
+                                                  />
+                                                  <span className='max-w-[200px] text-ellipsis line-clamp-1'>
+                                                    {option}
+                                                  </span>
+                                                </CommandItem>
+                                              ))}
+                                            </ScrollArea>
                                           </CommandGroup>
                                         </CommandList>
                                       </Command>
@@ -241,7 +334,7 @@ export function AddItemDialog({ modelFields, modelName, onSuccess }: {
                               <Select
                                 value={f.value === '' ? '' : String(f.value)}
                                 onValueChange={val => f.onChange(val === 'true')}
-                                disabled={loading}
+                                disabled={fetcher.state === 'submitting'}
                               >
                                 <SelectTrigger className="w-full">
                                   <SelectValue placeholder={`Select Value`} />
@@ -257,7 +350,8 @@ export function AddItemDialog({ modelFields, modelName, onSuccess }: {
                                 type="datetime-local"
                                 value={String(f.value ?? '')}
                                 onChange={e => f.onChange(e.target.value)}
-                                disabled={loading}
+                                disabled={fetcher.state === 'submitting'}
+                                className="w-full"
                               />
                             ) : ["Int", "Float", "BigInt", "Decimal"].includes(field.type) ? (
                               <Input
@@ -265,23 +359,23 @@ export function AddItemDialog({ modelFields, modelName, onSuccess }: {
                                 type="number"
                                 value={String(f.value ?? '')}
                                 onChange={e => f.onChange(e.target.value)}
-                                disabled={loading}
+                                disabled={fetcher.state === 'submitting'}
+                                className="w-full"
                               />
                             ) : (
-                              <Input {...f} value={String(f.value ?? '')} disabled={loading} />
+                              <Input {...f} value={String(f.value ?? '')} disabled={fetcher.state === 'submitting'} className="w-full" />
                             )}
                           </FormControl>
-                          <FormMessage />
+                          <FormMessage className='line-clamp-2 text-ellipsis' />
                         </FormItem>
                       );
                     }}
                   />
                 ))}
               </div>
-              {error && <div className="text-destructive text-sm">{error}</div>}
               <DialogFooter>
-                <Button type="submit" disabled={loading}>
-                  {loading ? 'Adding...' : 'Add'}
+                <Button type="submit" disabled={fetcher.state === 'submitting'}>
+                  {fetcher.state === 'submitting' ? 'Adding...' : 'Add'}
                 </Button>
                 <DialogClose asChild>
                   <Button type="button" variant="ghost">Cancel</Button>

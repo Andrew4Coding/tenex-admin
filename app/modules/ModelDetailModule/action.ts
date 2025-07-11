@@ -4,7 +4,7 @@ import type { ActionFunctionArgs } from "react-router";
 export async function ModelDetailAction({ request }: ActionFunctionArgs) {
     const formData = await request.formData();
 
-    if (request.method === 'delete') {
+    if (request.method === 'DELETE') {
         const model = formData.get('model') as string;
 
         if (!(model in prisma) || typeof (prisma as any)[model]?.delete !== 'function') {

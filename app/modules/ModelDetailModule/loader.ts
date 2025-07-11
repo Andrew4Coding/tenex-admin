@@ -1,5 +1,5 @@
 import { prisma } from "prisma/prisma";
-import type { LoaderFunctionArgs } from "react-router";
+import { redirect, type LoaderFunctionArgs } from "react-router";
 import type { PrismaType } from "~/types";
 
 export async function ModelDetailLoader({ request, params }: LoaderFunctionArgs) {
@@ -18,7 +18,7 @@ export async function ModelDetailLoader({ request, params }: LoaderFunctionArgs)
   });
 
   if (!item) {
-    throw new Error(`Item not found in ${model} with ID: ${id}`);
+    return redirect(`/${model}`);
   }
 
   // Get model metadata for field definitions

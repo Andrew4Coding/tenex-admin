@@ -94,8 +94,11 @@ export const ModelDetailModule = () => {
 
   const confirmDelete = () => {
     const formData = new FormData();
-    formData.append('intent', 'delete');
-    fetcher.submit(formData, { method: 'post' });
+    formData.append('model', modelName);
+    formData.append('id', item.id);
+    formData.append('idField', 'id'); // Assuming 'id' is the primary key field
+
+    fetcher.submit(formData, { method: 'delete' });
     setShowDeleteDialog(false);
   };
 
@@ -113,7 +116,7 @@ export const ModelDetailModule = () => {
       }
       revalidator.revalidate();
     }
-  }, [fetcher.data, navigate, modelName, revalidator]);
+  }, [fetcher.data]);
 
   return (
     <div className="h-full max-h-[calc(100vh-6rem)] flex flex-col gap-8">
