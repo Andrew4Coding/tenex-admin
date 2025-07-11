@@ -345,7 +345,7 @@ export function DataTable<T extends Record<string, any>>({ data, className, mode
                     <td className="px-2 py-2 flex gap-1 items-center">
                       {renderRowActions && renderRowActions(row)}
                       <Button 
-                        variant="ghost" 
+                        variant="destructive" 
                         size="icon" 
                         onClick={(e) => {
                           e.stopPropagation();
