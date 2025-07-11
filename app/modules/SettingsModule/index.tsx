@@ -30,14 +30,14 @@ export const SettingsModule = () => {
 
   return (
     <div className="flex min-h-screen gap-8">
-      <Card className='h-full w-72 p-4'>
-        <CardContent className='p-0'>
+      <Card className='h-full w-72'>
+        <CardContent className=''>
           <SidebarGroupLabel>Settings</SidebarGroupLabel>
           <Input
             placeholder="Search settings... (or Ctrl+F)"
             className="mb-4"
           />
-          <div>
+          <div className='space-y-2'>
             {MENU.map((item) => (
               <SidebarMenuItem className='list-none' key={item.key}>
                 <SidebarMenuButton asChild isActive={location.pathname === item.route}>
