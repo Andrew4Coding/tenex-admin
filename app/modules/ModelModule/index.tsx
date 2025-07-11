@@ -50,6 +50,8 @@ export const ModelModule = () => {
       <DataTable
         data={modelFindMany}
         className="flex-1 max-h-[calc(100vh-6rem)]"
+        modelName={param.model}
+        modelFields={modelFields}
         pagination={pagination}
         onPageChange={handlePageChange}
         onTakeChange={n => handleTakeChange({ target: { value: String(n) } } as any)}

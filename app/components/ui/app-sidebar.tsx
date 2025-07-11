@@ -1,7 +1,7 @@
 
-import { Box, Code2, Settings, User } from "lucide-react";
+import { Box, Code2, Home, Settings, User } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import {
     Sidebar,
     SidebarContent,
@@ -17,6 +17,11 @@ import { Button } from "./button";
 import { Input } from "./input";
 
 const UTILS_ITEMS = [
+    {
+        label: "Home",
+        href: "/",
+        icon: <Home />,
+    },
     {
         label: "Query Playground",
         href: "/query",

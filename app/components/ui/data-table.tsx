@@ -1,7 +1,8 @@
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon, Loader, Trash2 } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState, useTransition } from 'react';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { cn } from '~/lib/utils';
+import { Badge } from './badge';
 import { Button } from './button';
 import { Checkbox } from './checkbox';
 import { Input } from './input';
@@ -13,10 +14,13 @@ import {
   PaginationLink
 } from './pagination';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select';
+import type { prismaModelField } from '~/types';
 
 export type DataTableProps<T> = {
   data: T[];
   className?: string;
+  modelName?: string;
+  modelFields?: prismaModelField[];
   pagination?: {
     totalCount: number;
     page: number;
@@ -34,7 +38,7 @@ export type DataTableProps<T> = {
   onSingleDelete?: (id: string) => void;
 };
 
-export function DataTable<T extends Record<string, any>>({ data, className, pagination, onPageChange, onTakeChange, search, onSearchChange, isSearchDisabled = false, onBulkDelete, onSingleDelete }: DataTableProps<T>) {
+export function DataTable<T extends Record<string, any>>({ data, className, modelName, modelFields, pagination, onPageChange, onTakeChange, search, onSearchChange, isSearchDisabled = false, onBulkDelete, onSingleDelete }: DataTableProps<T>) {
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
   const [filters] = useState<Record<string, string>>({});
@@ -47,6 +51,7 @@ export function DataTable<T extends Record<string, any>>({ data, className, pagi
   const allSelected = selected.length === allIds.length && allIds.length > 0;
   const isIndeterminate = selected.length > 0 && selected.length < allIds.length;
   const selectAllRef = useRef<HTMLButtonElement | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (isPending) {
@@ -118,6 +123,24 @@ export function DataTable<T extends Record<string, any>>({ data, className, pagi
       startTransition(() => {
         onTakeChange(take);
       });
+    }
+  };
+
+  const handleRowClick = (row: T, event: React.MouseEvent) => {
+    // Don't navigate if clicking on interactive elements
+    const target = event.target as HTMLElement;
+    if (
+      target.closest('input[type="checkbox"]') ||
+      target.closest('button') ||
+      target.closest('a') ||
+      target.closest('[role="button"]')
+    ) {
+      return;
+    }
+
+    if (modelName) {
+      const primaryKey = String(row[idKey]);
+      navigate(`/${modelName}/${primaryKey}`);
     }
   };
 
@@ -206,7 +229,14 @@ export function DataTable<T extends Record<string, any>>({ data, className, pagi
               </tr>
             ) : (
               filteredData.map((row, i) => (
-                <tr key={i} className="hover:bg-accent/30">
+                <tr 
+                  key={i} 
+                  className={cn(
+                    "hover:bg-accent/30",
+                    modelName && "cursor-pointer"
+                  )}
+                  onClick={(e) => handleRowClick(row, e)}
+                >
                   <td className="px-2 py-2">
                     <Checkbox
                       checked={selected.includes(String(row[idKey]))}
@@ -230,6 +260,10 @@ export function DataTable<T extends Record<string, any>>({ data, className, pagi
                     }
                     const isLong = displayValue.length > 100;
                     const shownValue = isLong ? displayValue.slice(0, 100) + '…' : displayValue;
+                    
+                    // Find the field definition for this column
+                    const fieldDef = modelFields?.find(field => field.name === key);
+                    
                     let cellContent;
                     if (typeof value === 'string' && value.startsWith('https://')) {
                       cellContent = (
@@ -242,6 +276,42 @@ export function DataTable<T extends Record<string, any>>({ data, className, pagi
                         >
                           {shownValue}
                         </Link>
+                      );
+                    } else if (fieldDef?.type === 'DateTime' && value) {
+                      // Handle DateTime values
+                      const date = new Date(value);
+                      if (!isNaN(date.getTime())) {
+                        const formatted = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')} ${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}`;
+                        cellContent = (
+                          <Badge variant="secondary" title={value}>{formatted}</Badge>
+                        );
+                      } else {
+                        cellContent = (
+                          <span title={displayValue}>{shownValue}</span>
+                        );
+                      }
+                    } else if (fieldDef?.type === 'Boolean' && typeof value === 'boolean') {
+                      // Handle Boolean values
+                      cellContent = (
+                        <Badge variant={value ? "default" : "secondary"}>
+                          {value ? "True" : "False"}
+                        </Badge>
+                      );
+                    } else if (fieldDef?.type === 'Json' && value) {
+                      // Handle JSON values
+                      const jsonStr = typeof value === 'string' ? value : JSON.stringify(value);
+                      const isLong = jsonStr.length > 50;
+                      const shownJson = isLong ? jsonStr.slice(0, 50) + '…' : jsonStr;
+                      cellContent = (
+                        <span title={jsonStr} className="font-mono text-xs">
+                          {shownJson}
+                        </span>
+                      );
+                    } else if (value instanceof Date) {
+                      // Fallback for actual Date objects
+                      const formatted = `${value.getFullYear()}-${String(value.getMonth()+1).padStart(2,'0')}-${String(value.getDate()).padStart(2,'0')} ${String(value.getHours()).padStart(2,'0')}:${String(value.getMinutes()).padStart(2,'0')}`;
+                      cellContent = (
+                        <Badge variant="secondary" title={value.toISOString()}>{formatted}</Badge>
                       );
                     } else {
                       cellContent = (

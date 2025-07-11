@@ -14,8 +14,8 @@ import { ENV } from './lib/env';
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: 'prisma-admin' },
-    { name: 'prisma-admin', content: 'Welcome to prisma-admin!' },
+    { title: 'Tenex Admin' },
+    { name: 'Tenex Admin', content: 'Welcome to Humble Tenex Admin!' },
   ];
 }
 
