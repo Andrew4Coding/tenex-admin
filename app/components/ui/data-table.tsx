@@ -37,9 +37,10 @@ export type DataTableProps<T> = {
   onBulkDelete?: (ids: string[]) => void;
   onSingleDelete?: (id: string) => void;
   onSelectionReset?: () => void;
+  renderRowActions?: (row: T) => React.ReactNode;
 };
 
-export function DataTable<T extends Record<string, any>>({ data, className, modelName, modelFields, pagination, onPageChange, onTakeChange, search, onSearchChange, isSearchDisabled = false, onBulkDelete, onSingleDelete, onSelectionReset }: DataTableProps<T>) {
+export function DataTable<T extends Record<string, any>>({ data, className, modelName, modelFields, pagination, onPageChange, onTakeChange, search, onSearchChange, isSearchDisabled = false, onBulkDelete, onSingleDelete, onSelectionReset, renderRowActions }: DataTableProps<T>) {
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
   const [filters] = useState<Record<string, string>>({});
@@ -341,7 +342,8 @@ export function DataTable<T extends Record<string, any>>({ data, className, mode
                     );
                   })}
                   {onSingleDelete && (
-                    <td className="px-2 py-2">
+                    <td className="px-2 py-2 flex gap-1 items-center">
+                      {renderRowActions && renderRowActions(row)}
                       <Button 
                         variant="ghost" 
                         size="icon" 

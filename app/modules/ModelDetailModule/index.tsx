@@ -14,6 +14,7 @@ import {
 } from '~/components/ui/dialog';
 import { Label } from '~/components/ui/label';
 import type { ModelDetailLoader } from './loader';
+import { EditItemDialog } from '~/modules/ModelModule/EditItemDialog';
 
 export const ModelDetailModule = () => {
   const { item, modelName, modelFields, relatedModels } = useLoaderData<typeof ModelDetailLoader>();
@@ -84,10 +85,6 @@ export const ModelDetailModule = () => {
     }
   };
 
-  const handleEdit = () => {
-    navigate(`/${modelName}/${item.id}/edit`);
-  };
-
   const handleDelete = () => {
     setShowDeleteDialog(true);
   };
@@ -131,23 +128,19 @@ export const ModelDetailModule = () => {
           <h1 className="text-2xl font-bold">{modelName} Details</h1>
         </div>
         <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleEdit}
-            disabled={fetcher.state === 'submitting'}
-          >
-            <Edit className="w-4 h-4 mr-2" />
-            Edit
-          </Button>
+          <EditItemDialog
+            modelFields={modelFields}
+            modelName={modelName}
+            item={item}
+            onSuccess={() => revalidator.revalidate()}
+          />
           <Button
             variant="destructive"
             size="sm"
             onClick={handleDelete}
             disabled={fetcher.state === 'submitting'}
           >
-            <Trash2 className="w-4 h-4 mr-2" />
-            Delete
+            <Trash2 className="w-4 h-4" />
           </Button>
         </div>
       </div>

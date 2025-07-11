@@ -13,6 +13,7 @@ import {
 } from '~/components/ui/dialog';
 import { useDebounce } from '~/hooks/use-debounce';
 import { AddItemDialog } from './AddItemDialog';
+import { EditItemDialog } from './EditItemDialog';
 
 export const ModelModule = () => {
   const { modelFindMany, modelFields, pagination } = useLoaderData();
@@ -144,6 +145,17 @@ export const ModelModule = () => {
         onSelectionReset={() => {
           // This will be called when selection is reset after deletion
         }}
+        renderRowActions={(row) => (
+          <div className="flex gap-1">
+            <EditItemDialog
+              modelFields={modelFields}
+              modelName={param.model || ''}
+              item={row}
+              onSuccess={() => revalidator.revalidate()}
+            />
+            {/* The delete button is handled by onSingleDelete */}
+          </div>
+        )}
       />
 
       {/* Single Delete Confirmation Dialog */}
