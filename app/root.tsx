@@ -1,16 +1,21 @@
 import {
   data,
   isRouteErrorResponse,
+  Link,
   Links,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
+  useNavigate,
 } from 'react-router';
 
+import { RefreshCcw } from 'lucide-react';
 import type { Route } from './+types/root';
 import './app.css';
+import { Button } from './components/ui/button';
 import { ENV } from './lib/env';
+import { MainLayout } from './routes/_page';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -62,7 +67,8 @@ export async function loader() {
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   let message = 'Oops!';
-  let details = 'An unexpected error occurred.';
+  let details = JSON.stringify(error);
+
   let stack: string | undefined;
 
   if (isRouteErrorResponse(error)) {
@@ -70,21 +76,38 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
     details =
       error.status === 404
         ? 'The requested page could not be found.'
-        : error.statusText || details;
+        : error.data || details;
   } else if (import.meta.env.DEV && error && error instanceof Error) {
     details = error.message;
     stack = error.stack;
   }
 
+  const navigate = useNavigate();
+
   return (
-    <main className="pt-16 p-4 container mx-auto">
-      <h1>{message}</h1>
-      <p>{details}</p>
-      {stack && (
-        <pre className="w-full p-4 overflow-x-auto">
-          <code>{stack}</code>
-        </pre>
-      )}
-    </main>
+    <MainLayout>
+      <div className='text-center space-y-4'>
+        <div>
+          <h1 className='text-2xl font-bold'>{message}</h1>
+          <p className='text-gray-500'>{details}</p>
+        </div>
+        {stack && (
+          <pre className='text-sm max-h-96 overflow-auto'>
+            {stack}
+          </pre>
+        )}
+        <div className='grid grid-cols-2 gap-4'>
+          <Button variant='outline' onClick={() => navigate(0)} className='w-full'>
+            <RefreshCcw />
+            Reload
+          </Button>
+          <Link to={'/'}>
+            <Button className='w-full'>
+              I don't give a f*ck
+            </Button>
+          </Link>
+        </div>
+      </div>
+    </MainLayout>
   );
 }
