@@ -1,10 +1,9 @@
-import { createAuthClient } from 'better-auth/react';
-import { ENV } from './env';
+import { betterAuth } from "better-auth";
+import { prismaAdapter } from 'better-auth/adapters/prisma';
+import { prismaAdmin } from "prisma-admin/prisma-admin";
 
-export const getAuthServer = () => {
-  const auth_server = createAuthClient({
-    baseURL: ENV.BACKEND_URL,
-  });
-
-  return auth_server;
-};
+export const auth = betterAuth({
+  database: prismaAdapter(prismaAdmin, {
+    provider: 'postgresql',
+  }),
+})
