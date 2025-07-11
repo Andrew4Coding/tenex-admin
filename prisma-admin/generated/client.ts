@@ -66,6 +66,11 @@ export type Account = Prisma.AccountModel
  */
 export type Verification = Prisma.VerificationModel
 /**
+ * Model AllowedUser
+ * 
+ */
+export type AllowedUser = Prisma.AllowedUserModel
+/**
  * Model UserModelPermission
  * 
  */

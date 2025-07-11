@@ -20,8 +20,8 @@ model User {
   sessions      Session[]
   accounts      Account[]
 
-  isRootAdmin         Boolean               @default(false)
-  UserModelPermission UserModelPermission[]
+  isRootAdmin Boolean       @default(false)
+  AllowedUser AllowedUser[]
 
   @@unique([email])
   @@map("user")
@@ -72,11 +72,26 @@ model Verification {
   @@map("verification")
 }
 
+model AllowedUser {
+  id String @id
+
+  email String @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  UserModelPermission UserModelPermission[]
+  User                User?                 @relation(fields: [userId], references: [id])
+  userId              String?
+
+  @@map("allowed_user")
+}
+
 model UserModelPermission {
   id String @id
 
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  allowedUserId String      @unique
+  allowedUser   AllowedUser @relation(fields: [allowedUserId], references: [id], onDelete: Cascade)
 
   canCreate Boolean @default(false)
   canRead   Boolean @default(false)

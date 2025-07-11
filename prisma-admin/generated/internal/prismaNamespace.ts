@@ -398,6 +398,7 @@ export const ModelName = {
   Session: 'Session',
   Account: 'Account',
   Verification: 'Verification',
+  AllowedUser: 'AllowedUser',
   UserModelPermission: 'UserModelPermission'
 } as const
 
@@ -414,7 +415,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "session" | "account" | "verification" | "userModelPermission"
+    modelProps: "user" | "session" | "account" | "verification" | "allowedUser" | "userModelPermission"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -714,6 +715,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    AllowedUser: {
+      payload: Prisma.$AllowedUserPayload<ExtArgs>
+      fields: Prisma.AllowedUserFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.AllowedUserFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AllowedUserPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.AllowedUserFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AllowedUserPayload>
+        }
+        findFirst: {
+          args: Prisma.AllowedUserFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AllowedUserPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.AllowedUserFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AllowedUserPayload>
+        }
+        findMany: {
+          args: Prisma.AllowedUserFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AllowedUserPayload>[]
+        }
+        create: {
+          args: Prisma.AllowedUserCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AllowedUserPayload>
+        }
+        createMany: {
+          args: Prisma.AllowedUserCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.AllowedUserCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AllowedUserPayload>[]
+        }
+        delete: {
+          args: Prisma.AllowedUserDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AllowedUserPayload>
+        }
+        update: {
+          args: Prisma.AllowedUserUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AllowedUserPayload>
+        }
+        deleteMany: {
+          args: Prisma.AllowedUserDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.AllowedUserUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.AllowedUserUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AllowedUserPayload>[]
+        }
+        upsert: {
+          args: Prisma.AllowedUserUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AllowedUserPayload>
+        }
+        aggregate: {
+          args: Prisma.AllowedUserAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateAllowedUser>
+        }
+        groupBy: {
+          args: Prisma.AllowedUserGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AllowedUserGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.AllowedUserCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AllowedUserCountAggregateOutputType> | number
+        }
+      }
+    }
     UserModelPermission: {
       payload: Prisma.$UserModelPermissionPayload<ExtArgs>
       fields: Prisma.UserModelPermissionFieldRefs
@@ -886,9 +961,20 @@ export const VerificationScalarFieldEnum = {
 export type VerificationScalarFieldEnum = (typeof VerificationScalarFieldEnum)[keyof typeof VerificationScalarFieldEnum]
 
 
+export const AllowedUserScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId'
+} as const
+
+export type AllowedUserScalarFieldEnum = (typeof AllowedUserScalarFieldEnum)[keyof typeof AllowedUserScalarFieldEnum]
+
+
 export const UserModelPermissionScalarFieldEnum = {
   id: 'id',
-  userId: 'userId',
+  allowedUserId: 'allowedUserId',
   canCreate: 'canCreate',
   canRead: 'canRead',
   canUpdate: 'canUpdate',
@@ -1056,6 +1142,7 @@ export type GlobalOmitConfig = {
   session?: Prisma.SessionOmit
   account?: Prisma.AccountOmit
   verification?: Prisma.VerificationOmit
+  allowedUser?: Prisma.AllowedUserOmit
   userModelPermission?: Prisma.UserModelPermissionOmit
 }
 

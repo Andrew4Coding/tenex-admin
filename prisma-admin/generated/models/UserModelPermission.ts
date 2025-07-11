@@ -25,7 +25,7 @@ export type AggregateUserModelPermission = {
 
 export type UserModelPermissionMinAggregateOutputType = {
   id: string | null
-  userId: string | null
+  allowedUserId: string | null
   canCreate: boolean | null
   canRead: boolean | null
   canUpdate: boolean | null
@@ -35,7 +35,7 @@ export type UserModelPermissionMinAggregateOutputType = {
 
 export type UserModelPermissionMaxAggregateOutputType = {
   id: string | null
-  userId: string | null
+  allowedUserId: string | null
   canCreate: boolean | null
   canRead: boolean | null
   canUpdate: boolean | null
@@ -45,7 +45,7 @@ export type UserModelPermissionMaxAggregateOutputType = {
 
 export type UserModelPermissionCountAggregateOutputType = {
   id: number
-  userId: number
+  allowedUserId: number
   canCreate: number
   canRead: number
   canUpdate: number
@@ -57,7 +57,7 @@ export type UserModelPermissionCountAggregateOutputType = {
 
 export type UserModelPermissionMinAggregateInputType = {
   id?: true
-  userId?: true
+  allowedUserId?: true
   canCreate?: true
   canRead?: true
   canUpdate?: true
@@ -67,7 +67,7 @@ export type UserModelPermissionMinAggregateInputType = {
 
 export type UserModelPermissionMaxAggregateInputType = {
   id?: true
-  userId?: true
+  allowedUserId?: true
   canCreate?: true
   canRead?: true
   canUpdate?: true
@@ -77,7 +77,7 @@ export type UserModelPermissionMaxAggregateInputType = {
 
 export type UserModelPermissionCountAggregateInputType = {
   id?: true
-  userId?: true
+  allowedUserId?: true
   canCreate?: true
   canRead?: true
   canUpdate?: true
@@ -160,7 +160,7 @@ export type UserModelPermissionGroupByArgs<ExtArgs extends runtime.Types.Extensi
 
 export type UserModelPermissionGroupByOutputType = {
   id: string
-  userId: string
+  allowedUserId: string
   canCreate: boolean
   canRead: boolean
   canUpdate: boolean
@@ -191,29 +191,29 @@ export type UserModelPermissionWhereInput = {
   OR?: Prisma.UserModelPermissionWhereInput[]
   NOT?: Prisma.UserModelPermissionWhereInput | Prisma.UserModelPermissionWhereInput[]
   id?: Prisma.StringFilter<"UserModelPermission"> | string
-  userId?: Prisma.StringFilter<"UserModelPermission"> | string
+  allowedUserId?: Prisma.StringFilter<"UserModelPermission"> | string
   canCreate?: Prisma.BoolFilter<"UserModelPermission"> | boolean
   canRead?: Prisma.BoolFilter<"UserModelPermission"> | boolean
   canUpdate?: Prisma.BoolFilter<"UserModelPermission"> | boolean
   canDelete?: Prisma.BoolFilter<"UserModelPermission"> | boolean
   model?: Prisma.StringFilter<"UserModelPermission"> | string
-  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  allowedUser?: Prisma.XOR<Prisma.AllowedUserScalarRelationFilter, Prisma.AllowedUserWhereInput>
 }
 
 export type UserModelPermissionOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  allowedUserId?: Prisma.SortOrder
   canCreate?: Prisma.SortOrder
   canRead?: Prisma.SortOrder
   canUpdate?: Prisma.SortOrder
   canDelete?: Prisma.SortOrder
   model?: Prisma.SortOrder
-  user?: Prisma.UserOrderByWithRelationInput
+  allowedUser?: Prisma.AllowedUserOrderByWithRelationInput
 }
 
 export type UserModelPermissionWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  userId?: string
+  allowedUserId?: string
   AND?: Prisma.UserModelPermissionWhereInput | Prisma.UserModelPermissionWhereInput[]
   OR?: Prisma.UserModelPermissionWhereInput[]
   NOT?: Prisma.UserModelPermissionWhereInput | Prisma.UserModelPermissionWhereInput[]
@@ -222,12 +222,12 @@ export type UserModelPermissionWhereUniqueInput = Prisma.AtLeast<{
   canUpdate?: Prisma.BoolFilter<"UserModelPermission"> | boolean
   canDelete?: Prisma.BoolFilter<"UserModelPermission"> | boolean
   model?: Prisma.StringFilter<"UserModelPermission"> | string
-  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-}, "id" | "userId">
+  allowedUser?: Prisma.XOR<Prisma.AllowedUserScalarRelationFilter, Prisma.AllowedUserWhereInput>
+}, "id" | "allowedUserId">
 
 export type UserModelPermissionOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  allowedUserId?: Prisma.SortOrder
   canCreate?: Prisma.SortOrder
   canRead?: Prisma.SortOrder
   canUpdate?: Prisma.SortOrder
@@ -243,7 +243,7 @@ export type UserModelPermissionScalarWhereWithAggregatesInput = {
   OR?: Prisma.UserModelPermissionScalarWhereWithAggregatesInput[]
   NOT?: Prisma.UserModelPermissionScalarWhereWithAggregatesInput | Prisma.UserModelPermissionScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"UserModelPermission"> | string
-  userId?: Prisma.StringWithAggregatesFilter<"UserModelPermission"> | string
+  allowedUserId?: Prisma.StringWithAggregatesFilter<"UserModelPermission"> | string
   canCreate?: Prisma.BoolWithAggregatesFilter<"UserModelPermission"> | boolean
   canRead?: Prisma.BoolWithAggregatesFilter<"UserModelPermission"> | boolean
   canUpdate?: Prisma.BoolWithAggregatesFilter<"UserModelPermission"> | boolean
@@ -258,12 +258,12 @@ export type UserModelPermissionCreateInput = {
   canUpdate?: boolean
   canDelete?: boolean
   model: string
-  user: Prisma.UserCreateNestedOneWithoutUserModelPermissionInput
+  allowedUser: Prisma.AllowedUserCreateNestedOneWithoutUserModelPermissionInput
 }
 
 export type UserModelPermissionUncheckedCreateInput = {
   id: string
-  userId: string
+  allowedUserId: string
   canCreate?: boolean
   canRead?: boolean
   canUpdate?: boolean
@@ -278,12 +278,12 @@ export type UserModelPermissionUpdateInput = {
   canUpdate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   canDelete?: Prisma.BoolFieldUpdateOperationsInput | boolean
   model?: Prisma.StringFieldUpdateOperationsInput | string
-  user?: Prisma.UserUpdateOneRequiredWithoutUserModelPermissionNestedInput
+  allowedUser?: Prisma.AllowedUserUpdateOneRequiredWithoutUserModelPermissionNestedInput
 }
 
 export type UserModelPermissionUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  allowedUserId?: Prisma.StringFieldUpdateOperationsInput | string
   canCreate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   canRead?: Prisma.BoolFieldUpdateOperationsInput | boolean
   canUpdate?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -293,7 +293,7 @@ export type UserModelPermissionUncheckedUpdateInput = {
 
 export type UserModelPermissionCreateManyInput = {
   id: string
-  userId: string
+  allowedUserId: string
   canCreate?: boolean
   canRead?: boolean
   canUpdate?: boolean
@@ -312,7 +312,7 @@ export type UserModelPermissionUpdateManyMutationInput = {
 
 export type UserModelPermissionUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  allowedUserId?: Prisma.StringFieldUpdateOperationsInput | string
   canCreate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   canRead?: Prisma.BoolFieldUpdateOperationsInput | boolean
   canUpdate?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -332,7 +332,7 @@ export type UserModelPermissionOrderByRelationAggregateInput = {
 
 export type UserModelPermissionCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  allowedUserId?: Prisma.SortOrder
   canCreate?: Prisma.SortOrder
   canRead?: Prisma.SortOrder
   canUpdate?: Prisma.SortOrder
@@ -342,7 +342,7 @@ export type UserModelPermissionCountOrderByAggregateInput = {
 
 export type UserModelPermissionMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  allowedUserId?: Prisma.SortOrder
   canCreate?: Prisma.SortOrder
   canRead?: Prisma.SortOrder
   canUpdate?: Prisma.SortOrder
@@ -352,7 +352,7 @@ export type UserModelPermissionMaxOrderByAggregateInput = {
 
 export type UserModelPermissionMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  allowedUserId?: Prisma.SortOrder
   canCreate?: Prisma.SortOrder
   canRead?: Prisma.SortOrder
   canUpdate?: Prisma.SortOrder
@@ -360,49 +360,49 @@ export type UserModelPermissionMinOrderByAggregateInput = {
   model?: Prisma.SortOrder
 }
 
-export type UserModelPermissionCreateNestedManyWithoutUserInput = {
-  create?: Prisma.XOR<Prisma.UserModelPermissionCreateWithoutUserInput, Prisma.UserModelPermissionUncheckedCreateWithoutUserInput> | Prisma.UserModelPermissionCreateWithoutUserInput[] | Prisma.UserModelPermissionUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.UserModelPermissionCreateOrConnectWithoutUserInput | Prisma.UserModelPermissionCreateOrConnectWithoutUserInput[]
-  createMany?: Prisma.UserModelPermissionCreateManyUserInputEnvelope
+export type UserModelPermissionCreateNestedManyWithoutAllowedUserInput = {
+  create?: Prisma.XOR<Prisma.UserModelPermissionCreateWithoutAllowedUserInput, Prisma.UserModelPermissionUncheckedCreateWithoutAllowedUserInput> | Prisma.UserModelPermissionCreateWithoutAllowedUserInput[] | Prisma.UserModelPermissionUncheckedCreateWithoutAllowedUserInput[]
+  connectOrCreate?: Prisma.UserModelPermissionCreateOrConnectWithoutAllowedUserInput | Prisma.UserModelPermissionCreateOrConnectWithoutAllowedUserInput[]
+  createMany?: Prisma.UserModelPermissionCreateManyAllowedUserInputEnvelope
   connect?: Prisma.UserModelPermissionWhereUniqueInput | Prisma.UserModelPermissionWhereUniqueInput[]
 }
 
-export type UserModelPermissionUncheckedCreateNestedManyWithoutUserInput = {
-  create?: Prisma.XOR<Prisma.UserModelPermissionCreateWithoutUserInput, Prisma.UserModelPermissionUncheckedCreateWithoutUserInput> | Prisma.UserModelPermissionCreateWithoutUserInput[] | Prisma.UserModelPermissionUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.UserModelPermissionCreateOrConnectWithoutUserInput | Prisma.UserModelPermissionCreateOrConnectWithoutUserInput[]
-  createMany?: Prisma.UserModelPermissionCreateManyUserInputEnvelope
+export type UserModelPermissionUncheckedCreateNestedManyWithoutAllowedUserInput = {
+  create?: Prisma.XOR<Prisma.UserModelPermissionCreateWithoutAllowedUserInput, Prisma.UserModelPermissionUncheckedCreateWithoutAllowedUserInput> | Prisma.UserModelPermissionCreateWithoutAllowedUserInput[] | Prisma.UserModelPermissionUncheckedCreateWithoutAllowedUserInput[]
+  connectOrCreate?: Prisma.UserModelPermissionCreateOrConnectWithoutAllowedUserInput | Prisma.UserModelPermissionCreateOrConnectWithoutAllowedUserInput[]
+  createMany?: Prisma.UserModelPermissionCreateManyAllowedUserInputEnvelope
   connect?: Prisma.UserModelPermissionWhereUniqueInput | Prisma.UserModelPermissionWhereUniqueInput[]
 }
 
-export type UserModelPermissionUpdateManyWithoutUserNestedInput = {
-  create?: Prisma.XOR<Prisma.UserModelPermissionCreateWithoutUserInput, Prisma.UserModelPermissionUncheckedCreateWithoutUserInput> | Prisma.UserModelPermissionCreateWithoutUserInput[] | Prisma.UserModelPermissionUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.UserModelPermissionCreateOrConnectWithoutUserInput | Prisma.UserModelPermissionCreateOrConnectWithoutUserInput[]
-  upsert?: Prisma.UserModelPermissionUpsertWithWhereUniqueWithoutUserInput | Prisma.UserModelPermissionUpsertWithWhereUniqueWithoutUserInput[]
-  createMany?: Prisma.UserModelPermissionCreateManyUserInputEnvelope
+export type UserModelPermissionUpdateManyWithoutAllowedUserNestedInput = {
+  create?: Prisma.XOR<Prisma.UserModelPermissionCreateWithoutAllowedUserInput, Prisma.UserModelPermissionUncheckedCreateWithoutAllowedUserInput> | Prisma.UserModelPermissionCreateWithoutAllowedUserInput[] | Prisma.UserModelPermissionUncheckedCreateWithoutAllowedUserInput[]
+  connectOrCreate?: Prisma.UserModelPermissionCreateOrConnectWithoutAllowedUserInput | Prisma.UserModelPermissionCreateOrConnectWithoutAllowedUserInput[]
+  upsert?: Prisma.UserModelPermissionUpsertWithWhereUniqueWithoutAllowedUserInput | Prisma.UserModelPermissionUpsertWithWhereUniqueWithoutAllowedUserInput[]
+  createMany?: Prisma.UserModelPermissionCreateManyAllowedUserInputEnvelope
   set?: Prisma.UserModelPermissionWhereUniqueInput | Prisma.UserModelPermissionWhereUniqueInput[]
   disconnect?: Prisma.UserModelPermissionWhereUniqueInput | Prisma.UserModelPermissionWhereUniqueInput[]
   delete?: Prisma.UserModelPermissionWhereUniqueInput | Prisma.UserModelPermissionWhereUniqueInput[]
   connect?: Prisma.UserModelPermissionWhereUniqueInput | Prisma.UserModelPermissionWhereUniqueInput[]
-  update?: Prisma.UserModelPermissionUpdateWithWhereUniqueWithoutUserInput | Prisma.UserModelPermissionUpdateWithWhereUniqueWithoutUserInput[]
-  updateMany?: Prisma.UserModelPermissionUpdateManyWithWhereWithoutUserInput | Prisma.UserModelPermissionUpdateManyWithWhereWithoutUserInput[]
+  update?: Prisma.UserModelPermissionUpdateWithWhereUniqueWithoutAllowedUserInput | Prisma.UserModelPermissionUpdateWithWhereUniqueWithoutAllowedUserInput[]
+  updateMany?: Prisma.UserModelPermissionUpdateManyWithWhereWithoutAllowedUserInput | Prisma.UserModelPermissionUpdateManyWithWhereWithoutAllowedUserInput[]
   deleteMany?: Prisma.UserModelPermissionScalarWhereInput | Prisma.UserModelPermissionScalarWhereInput[]
 }
 
-export type UserModelPermissionUncheckedUpdateManyWithoutUserNestedInput = {
-  create?: Prisma.XOR<Prisma.UserModelPermissionCreateWithoutUserInput, Prisma.UserModelPermissionUncheckedCreateWithoutUserInput> | Prisma.UserModelPermissionCreateWithoutUserInput[] | Prisma.UserModelPermissionUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.UserModelPermissionCreateOrConnectWithoutUserInput | Prisma.UserModelPermissionCreateOrConnectWithoutUserInput[]
-  upsert?: Prisma.UserModelPermissionUpsertWithWhereUniqueWithoutUserInput | Prisma.UserModelPermissionUpsertWithWhereUniqueWithoutUserInput[]
-  createMany?: Prisma.UserModelPermissionCreateManyUserInputEnvelope
+export type UserModelPermissionUncheckedUpdateManyWithoutAllowedUserNestedInput = {
+  create?: Prisma.XOR<Prisma.UserModelPermissionCreateWithoutAllowedUserInput, Prisma.UserModelPermissionUncheckedCreateWithoutAllowedUserInput> | Prisma.UserModelPermissionCreateWithoutAllowedUserInput[] | Prisma.UserModelPermissionUncheckedCreateWithoutAllowedUserInput[]
+  connectOrCreate?: Prisma.UserModelPermissionCreateOrConnectWithoutAllowedUserInput | Prisma.UserModelPermissionCreateOrConnectWithoutAllowedUserInput[]
+  upsert?: Prisma.UserModelPermissionUpsertWithWhereUniqueWithoutAllowedUserInput | Prisma.UserModelPermissionUpsertWithWhereUniqueWithoutAllowedUserInput[]
+  createMany?: Prisma.UserModelPermissionCreateManyAllowedUserInputEnvelope
   set?: Prisma.UserModelPermissionWhereUniqueInput | Prisma.UserModelPermissionWhereUniqueInput[]
   disconnect?: Prisma.UserModelPermissionWhereUniqueInput | Prisma.UserModelPermissionWhereUniqueInput[]
   delete?: Prisma.UserModelPermissionWhereUniqueInput | Prisma.UserModelPermissionWhereUniqueInput[]
   connect?: Prisma.UserModelPermissionWhereUniqueInput | Prisma.UserModelPermissionWhereUniqueInput[]
-  update?: Prisma.UserModelPermissionUpdateWithWhereUniqueWithoutUserInput | Prisma.UserModelPermissionUpdateWithWhereUniqueWithoutUserInput[]
-  updateMany?: Prisma.UserModelPermissionUpdateManyWithWhereWithoutUserInput | Prisma.UserModelPermissionUpdateManyWithWhereWithoutUserInput[]
+  update?: Prisma.UserModelPermissionUpdateWithWhereUniqueWithoutAllowedUserInput | Prisma.UserModelPermissionUpdateWithWhereUniqueWithoutAllowedUserInput[]
+  updateMany?: Prisma.UserModelPermissionUpdateManyWithWhereWithoutAllowedUserInput | Prisma.UserModelPermissionUpdateManyWithWhereWithoutAllowedUserInput[]
   deleteMany?: Prisma.UserModelPermissionScalarWhereInput | Prisma.UserModelPermissionScalarWhereInput[]
 }
 
-export type UserModelPermissionCreateWithoutUserInput = {
+export type UserModelPermissionCreateWithoutAllowedUserInput = {
   id: string
   canCreate?: boolean
   canRead?: boolean
@@ -411,7 +411,7 @@ export type UserModelPermissionCreateWithoutUserInput = {
   model: string
 }
 
-export type UserModelPermissionUncheckedCreateWithoutUserInput = {
+export type UserModelPermissionUncheckedCreateWithoutAllowedUserInput = {
   id: string
   canCreate?: boolean
   canRead?: boolean
@@ -420,30 +420,30 @@ export type UserModelPermissionUncheckedCreateWithoutUserInput = {
   model: string
 }
 
-export type UserModelPermissionCreateOrConnectWithoutUserInput = {
+export type UserModelPermissionCreateOrConnectWithoutAllowedUserInput = {
   where: Prisma.UserModelPermissionWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserModelPermissionCreateWithoutUserInput, Prisma.UserModelPermissionUncheckedCreateWithoutUserInput>
+  create: Prisma.XOR<Prisma.UserModelPermissionCreateWithoutAllowedUserInput, Prisma.UserModelPermissionUncheckedCreateWithoutAllowedUserInput>
 }
 
-export type UserModelPermissionCreateManyUserInputEnvelope = {
-  data: Prisma.UserModelPermissionCreateManyUserInput | Prisma.UserModelPermissionCreateManyUserInput[]
+export type UserModelPermissionCreateManyAllowedUserInputEnvelope = {
+  data: Prisma.UserModelPermissionCreateManyAllowedUserInput | Prisma.UserModelPermissionCreateManyAllowedUserInput[]
   skipDuplicates?: boolean
 }
 
-export type UserModelPermissionUpsertWithWhereUniqueWithoutUserInput = {
+export type UserModelPermissionUpsertWithWhereUniqueWithoutAllowedUserInput = {
   where: Prisma.UserModelPermissionWhereUniqueInput
-  update: Prisma.XOR<Prisma.UserModelPermissionUpdateWithoutUserInput, Prisma.UserModelPermissionUncheckedUpdateWithoutUserInput>
-  create: Prisma.XOR<Prisma.UserModelPermissionCreateWithoutUserInput, Prisma.UserModelPermissionUncheckedCreateWithoutUserInput>
+  update: Prisma.XOR<Prisma.UserModelPermissionUpdateWithoutAllowedUserInput, Prisma.UserModelPermissionUncheckedUpdateWithoutAllowedUserInput>
+  create: Prisma.XOR<Prisma.UserModelPermissionCreateWithoutAllowedUserInput, Prisma.UserModelPermissionUncheckedCreateWithoutAllowedUserInput>
 }
 
-export type UserModelPermissionUpdateWithWhereUniqueWithoutUserInput = {
+export type UserModelPermissionUpdateWithWhereUniqueWithoutAllowedUserInput = {
   where: Prisma.UserModelPermissionWhereUniqueInput
-  data: Prisma.XOR<Prisma.UserModelPermissionUpdateWithoutUserInput, Prisma.UserModelPermissionUncheckedUpdateWithoutUserInput>
+  data: Prisma.XOR<Prisma.UserModelPermissionUpdateWithoutAllowedUserInput, Prisma.UserModelPermissionUncheckedUpdateWithoutAllowedUserInput>
 }
 
-export type UserModelPermissionUpdateManyWithWhereWithoutUserInput = {
+export type UserModelPermissionUpdateManyWithWhereWithoutAllowedUserInput = {
   where: Prisma.UserModelPermissionScalarWhereInput
-  data: Prisma.XOR<Prisma.UserModelPermissionUpdateManyMutationInput, Prisma.UserModelPermissionUncheckedUpdateManyWithoutUserInput>
+  data: Prisma.XOR<Prisma.UserModelPermissionUpdateManyMutationInput, Prisma.UserModelPermissionUncheckedUpdateManyWithoutAllowedUserInput>
 }
 
 export type UserModelPermissionScalarWhereInput = {
@@ -451,7 +451,7 @@ export type UserModelPermissionScalarWhereInput = {
   OR?: Prisma.UserModelPermissionScalarWhereInput[]
   NOT?: Prisma.UserModelPermissionScalarWhereInput | Prisma.UserModelPermissionScalarWhereInput[]
   id?: Prisma.StringFilter<"UserModelPermission"> | string
-  userId?: Prisma.StringFilter<"UserModelPermission"> | string
+  allowedUserId?: Prisma.StringFilter<"UserModelPermission"> | string
   canCreate?: Prisma.BoolFilter<"UserModelPermission"> | boolean
   canRead?: Prisma.BoolFilter<"UserModelPermission"> | boolean
   canUpdate?: Prisma.BoolFilter<"UserModelPermission"> | boolean
@@ -459,7 +459,7 @@ export type UserModelPermissionScalarWhereInput = {
   model?: Prisma.StringFilter<"UserModelPermission"> | string
 }
 
-export type UserModelPermissionCreateManyUserInput = {
+export type UserModelPermissionCreateManyAllowedUserInput = {
   id: string
   canCreate?: boolean
   canRead?: boolean
@@ -468,7 +468,7 @@ export type UserModelPermissionCreateManyUserInput = {
   model: string
 }
 
-export type UserModelPermissionUpdateWithoutUserInput = {
+export type UserModelPermissionUpdateWithoutAllowedUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   canCreate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   canRead?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -477,7 +477,7 @@ export type UserModelPermissionUpdateWithoutUserInput = {
   model?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
-export type UserModelPermissionUncheckedUpdateWithoutUserInput = {
+export type UserModelPermissionUncheckedUpdateWithoutAllowedUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   canCreate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   canRead?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -486,7 +486,7 @@ export type UserModelPermissionUncheckedUpdateWithoutUserInput = {
   model?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
-export type UserModelPermissionUncheckedUpdateManyWithoutUserInput = {
+export type UserModelPermissionUncheckedUpdateManyWithoutAllowedUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   canCreate?: Prisma.BoolFieldUpdateOperationsInput | boolean
   canRead?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -499,40 +499,40 @@ export type UserModelPermissionUncheckedUpdateManyWithoutUserInput = {
 
 export type UserModelPermissionSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  userId?: boolean
+  allowedUserId?: boolean
   canCreate?: boolean
   canRead?: boolean
   canUpdate?: boolean
   canDelete?: boolean
   model?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  allowedUser?: boolean | Prisma.AllowedUserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["userModelPermission"]>
 
 export type UserModelPermissionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  userId?: boolean
+  allowedUserId?: boolean
   canCreate?: boolean
   canRead?: boolean
   canUpdate?: boolean
   canDelete?: boolean
   model?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  allowedUser?: boolean | Prisma.AllowedUserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["userModelPermission"]>
 
 export type UserModelPermissionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  userId?: boolean
+  allowedUserId?: boolean
   canCreate?: boolean
   canRead?: boolean
   canUpdate?: boolean
   canDelete?: boolean
   model?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  allowedUser?: boolean | Prisma.AllowedUserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["userModelPermission"]>
 
 export type UserModelPermissionSelectScalar = {
   id?: boolean
-  userId?: boolean
+  allowedUserId?: boolean
   canCreate?: boolean
   canRead?: boolean
   canUpdate?: boolean
@@ -540,25 +540,25 @@ export type UserModelPermissionSelectScalar = {
   model?: boolean
 }
 
-export type UserModelPermissionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "canCreate" | "canRead" | "canUpdate" | "canDelete" | "model", ExtArgs["result"]["userModelPermission"]>
+export type UserModelPermissionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "allowedUserId" | "canCreate" | "canRead" | "canUpdate" | "canDelete" | "model", ExtArgs["result"]["userModelPermission"]>
 export type UserModelPermissionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  allowedUser?: boolean | Prisma.AllowedUserDefaultArgs<ExtArgs>
 }
 export type UserModelPermissionIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  allowedUser?: boolean | Prisma.AllowedUserDefaultArgs<ExtArgs>
 }
 export type UserModelPermissionIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  allowedUser?: boolean | Prisma.AllowedUserDefaultArgs<ExtArgs>
 }
 
 export type $UserModelPermissionPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "UserModelPermission"
   objects: {
-    user: Prisma.$UserPayload<ExtArgs>
+    allowedUser: Prisma.$AllowedUserPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    userId: string
+    allowedUserId: string
     canCreate: boolean
     canRead: boolean
     canUpdate: boolean
@@ -958,7 +958,7 @@ readonly fields: UserModelPermissionFieldRefs;
  */
 export interface Prisma__UserModelPermissionClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  allowedUser<T extends Prisma.AllowedUserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AllowedUserDefaultArgs<ExtArgs>>): Prisma.Prisma__AllowedUserClient<runtime.Types.Result.GetResult<Prisma.$AllowedUserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -989,7 +989,7 @@ export interface Prisma__UserModelPermissionClient<T, Null = never, ExtArgs exte
  */
 export interface UserModelPermissionFieldRefs {
   readonly id: Prisma.FieldRef<"UserModelPermission", 'String'>
-  readonly userId: Prisma.FieldRef<"UserModelPermission", 'String'>
+  readonly allowedUserId: Prisma.FieldRef<"UserModelPermission", 'String'>
   readonly canCreate: Prisma.FieldRef<"UserModelPermission", 'Boolean'>
   readonly canRead: Prisma.FieldRef<"UserModelPermission", 'Boolean'>
   readonly canUpdate: Prisma.FieldRef<"UserModelPermission", 'Boolean'>
