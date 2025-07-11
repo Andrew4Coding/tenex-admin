@@ -1,6 +1,12 @@
 import { ArrowLeft, Edit, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Link, useFetcher, useLoaderData, useNavigate, useRevalidator } from 'react-router';
+import {
+  Link,
+  useFetcher,
+  useLoaderData,
+  useNavigate,
+  useRevalidator,
+} from 'react-router';
 import { toast } from 'sonner';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
@@ -17,7 +23,8 @@ import type { ModelDetailLoader } from './loader';
 import { EditItemDialog } from '~/modules/ModelModule/EditItemDialog';
 
 export const ModelDetailModule = () => {
-  const { item, modelName, modelFields, relatedModels } = useLoaderData<typeof ModelDetailLoader>();
+  const { item, modelName, modelFields, relatedModels } =
+    useLoaderData<typeof ModelDetailLoader>();
 
   const fetcher = useFetcher();
   const revalidator = useRevalidator();
@@ -26,7 +33,7 @@ export const ModelDetailModule = () => {
 
   const renderFieldValue = (key: string, value: any) => {
     // Find the field definition for this key
-    const fieldDef = modelFields?.find(field => field.name === key);
+    const fieldDef = modelFields?.find((field) => field.name === key);
 
     if (fieldDef?.type === 'DateTime' && value) {
       // Handle DateTime values
@@ -34,14 +41,16 @@ export const ModelDetailModule = () => {
       if (!isNaN(date.getTime())) {
         const formatted = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
         return (
-          <Badge variant="secondary" title={value}>{formatted}</Badge>
+          <Badge variant="secondary" title={value}>
+            {formatted}
+          </Badge>
         );
       }
     } else if (fieldDef?.type === 'Boolean' && typeof value === 'boolean') {
       // Handle Boolean values
       return (
-        <Badge variant={value ? "default" : "secondary"}>
-          {value ? "True" : "False"}
+        <Badge variant={value ? 'default' : 'secondary'}>
+          {value ? 'True' : 'False'}
         </Badge>
       );
     } else if (fieldDef?.type === 'Json' && value) {
@@ -75,13 +84,13 @@ export const ModelDetailModule = () => {
       // Fallback for actual Date objects
       const formatted = `${value.getFullYear()}-${String(value.getMonth() + 1).padStart(2, '0')}-${String(value.getDate()).padStart(2, '0')} ${String(value.getHours()).padStart(2, '0')}:${String(value.getMinutes()).padStart(2, '0')}`;
       return (
-        <Badge variant="secondary" title={value.toISOString()}>{formatted}</Badge>
+        <Badge variant="secondary" title={value.toISOString()}>
+          {formatted}
+        </Badge>
       );
     } else {
       // Default string display
-      return (
-        <span className="text-sm">{String(value ?? '')}</span>
-      );
+      return <span className="text-sm">{String(value ?? '')}</span>;
     }
   };
 
@@ -109,7 +118,9 @@ export const ModelDetailModule = () => {
         toast.success('Item deleted successfully!');
         navigate(`/${modelName}`);
       } else {
-        toast.error(fetcher.data.error || 'An error occurred while deleting the item.');
+        toast.error(
+          fetcher.data.error || 'An error occurred while deleting the item.'
+        );
       }
       revalidator.revalidate();
     }
@@ -154,9 +165,7 @@ export const ModelDetailModule = () => {
                 <Label className="text-sm font-medium text-muted-foreground capitalize">
                   {key}
                 </Label>
-                <div>
-                  {renderFieldValue(key, value)}
-                </div>
+                <div>{renderFieldValue(key, value)}</div>
               </div>
             ))}
           </div>
@@ -168,7 +177,11 @@ export const ModelDetailModule = () => {
             <h2 className="text-lg font-semibold mb-4">Related Models</h2>
             <div className="flex flex-wrap gap-2">
               {relatedModels.map((relatedModel, index) => (
-                <Link to={`/${relatedModel.name}/${relatedModel.id ? `${relatedModel.id}` : ''}`} key={index} className="no-underline">
+                <Link
+                  to={`/${relatedModel.name}/${relatedModel.id ? `${relatedModel.id}` : ''}`}
+                  key={index}
+                  className="no-underline"
+                >
                   <Badge
                     key={`${relatedModel.name}-${index}`}
                     variant="outline"
@@ -196,7 +209,8 @@ export const ModelDetailModule = () => {
             <DialogDescription>
               This action cannot be undone. This will permanently delete the{' '}
               <span className="font-semibold">{modelName}</span> item with ID{' '}
-              <span className="font-mono bg-muted px-1 rounded">{item.id}</span>.
+              <span className="font-mono bg-muted px-1 rounded">{item.id}</span>
+              .
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -215,4 +229,4 @@ export const ModelDetailModule = () => {
       </Dialog>
     </div>
   );
-}
+};

@@ -1,7 +1,4 @@
-import type {
-  ActionFunctionArgs,
-  LoaderFunctionArgs,
-} from 'react-router';
+import type { ActionFunctionArgs, LoaderFunctionArgs } from 'react-router';
 import { QueryModule } from '~/modules/QueryModule';
 import { QueryAction } from '~/modules/QueryModule/action';
 import { QueryLoader } from '~/modules/QueryModule/loader';

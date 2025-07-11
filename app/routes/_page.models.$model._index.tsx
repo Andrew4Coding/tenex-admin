@@ -1,7 +1,4 @@
-import type {
-  ActionFunctionArgs,
-  LoaderFunctionArgs,
-} from 'react-router';
+import type { ActionFunctionArgs, LoaderFunctionArgs } from 'react-router';
 import { ModelModule } from '~/modules/ModelModule';
 import { ModelAction } from '~/modules/ModelModule/action';
 import { ModelLoader } from '~/modules/ModelModule/loader';

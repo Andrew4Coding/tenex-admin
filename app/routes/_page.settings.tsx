@@ -1,7 +1,4 @@
-import type {
-  ActionFunctionArgs,
-  LoaderFunctionArgs,
-} from 'react-router';
+import type { ActionFunctionArgs, LoaderFunctionArgs } from 'react-router';
 import { SettingsModule } from '~/modules/SettingsModule';
 import { SettingsAction } from '~/modules/SettingsModule/action';
 import { SettingsLoader } from '~/modules/SettingsModule/loader';

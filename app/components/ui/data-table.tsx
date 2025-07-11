@@ -1,4 +1,11 @@
-import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon, Loader, Trash2 } from 'lucide-react';
+import {
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronUpIcon,
+  Loader,
+  Trash2,
+} from 'lucide-react';
 import { useEffect, useMemo, useRef, useState, useTransition } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { cn } from '~/lib/utils';
@@ -12,9 +19,15 @@ import {
   PaginationContent,
   PaginationEllipsis,
   PaginationItem,
-  PaginationLink
+  PaginationLink,
 } from './pagination';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from './select';
 
 export type DataTableProps<T> = {
   data: T[];
@@ -40,7 +53,22 @@ export type DataTableProps<T> = {
   renderRowActions?: (row: T) => React.ReactNode;
 };
 
-export function DataTable<T extends Record<string, any>>({ data, className, modelName, modelFields, pagination, onPageChange, onTakeChange, search, onSearchChange, isSearchDisabled = false, onBulkDelete, onSingleDelete, onSelectionReset, renderRowActions }: DataTableProps<T>) {
+export function DataTable<T extends Record<string, any>>({
+  data,
+  className,
+  modelName,
+  modelFields,
+  pagination,
+  onPageChange,
+  onTakeChange,
+  search,
+  onSearchChange,
+  isSearchDisabled = false,
+  onBulkDelete,
+  onSingleDelete,
+  onSelectionReset,
+  renderRowActions,
+}: DataTableProps<T>) {
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
   const [filters] = useState<Record<string, string>>({});
@@ -49,9 +77,10 @@ export function DataTable<T extends Record<string, any>>({ data, className, mode
   const loaderTimeout = useRef<NodeJS.Timeout | null>(null);
   const [selected, setSelected] = useState<string[]>([]);
   const idKey = data && data.length > 0 ? Object.keys(data[0])[0] : 'id';
-  const allIds = data.map(row => String(row[idKey]));
+  const allIds = data.map((row) => String(row[idKey]));
   const allSelected = selected.length === allIds.length && allIds.length > 0;
-  const isIndeterminate = selected.length > 0 && selected.length < allIds.length;
+  const isIndeterminate =
+    selected.length > 0 && selected.length < allIds.length;
   const selectAllRef = useRef<HTMLButtonElement | null>(null);
   const navigate = useNavigate();
 
@@ -81,7 +110,11 @@ export function DataTable<T extends Record<string, any>>({ data, className, mode
     // Per-column filters
     Object.entries(filters).forEach(([key, value]) => {
       if (value) {
-        filtered = filtered.filter(row => String(row[key] ?? '').toLowerCase().includes(value.toLowerCase()));
+        filtered = filtered.filter((row) =>
+          String(row[key] ?? '')
+            .toLowerCase()
+            .includes(value.toLowerCase())
+        );
       }
     });
     // Sorting
@@ -114,7 +147,12 @@ export function DataTable<T extends Record<string, any>>({ data, className, mode
 
   // Move pagination handlers inside
   const handlePageChange = (page: number) => {
-    if (pagination && page >= 1 && page <= pagination.totalPages && onPageChange) {
+    if (
+      pagination &&
+      page >= 1 &&
+      page <= pagination.totalPages &&
+      onPageChange
+    ) {
       startTransition(() => {
         onPageChange(page);
       });
@@ -149,7 +187,9 @@ export function DataTable<T extends Record<string, any>>({ data, className, mode
   useEffect(() => {
     if (selectAllRef.current) {
       // Find the input element inside the Radix Checkbox button
-      const input = selectAllRef.current.querySelector('input[type="checkbox"]') as HTMLInputElement | null;
+      const input = selectAllRef.current.querySelector(
+        'input[type="checkbox"]'
+      ) as HTMLInputElement | null;
       if (input) input.indeterminate = isIndeterminate;
     }
   }, [isIndeterminate]);
@@ -163,26 +203,33 @@ export function DataTable<T extends Record<string, any>>({ data, className, mode
   }, [data, onSelectionReset]);
 
   return (
-    <div className={cn(className, 'flex flex-col overflow-auto w-full relative')}> {/* root is flex column, fills parent */}
-
+    <div
+      className={cn(className, 'flex flex-col overflow-auto w-full relative')}
+    >
+      {' '}
+      {/* root is flex column, fills parent */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-4 flex-shrink-0">
-        {
-          !isSearchDisabled &&
+        {!isSearchDisabled && (
           <Input
             placeholder="Search..."
             value={search || ''}
-            onChange={e => onSearchChange && onSearchChange(e.target.value)}
+            onChange={(e) => onSearchChange && onSearchChange(e.target.value)}
             className="max-w-xs"
             disabled={showLoader}
           />
-        }
+        )}
         {/* Bulk delete bar */}
         {selected.length > 0 && (
           <div className="flex items-center gap-2">
-            <span className='text-sm'>{selected.length} selected</span>
+            <span className="text-sm">{selected.length} selected</span>
             {onBulkDelete && (
-              <Button variant="destructive" size="sm" onClick={() => onBulkDelete(selected)}>
-                <Trash2 className="w-4 h-4 mr-1" /> {selected.length === 1 ? 'Delete' : 'Bulk Delete'}
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => onBulkDelete(selected)}
+              >
+                <Trash2 className="w-4 h-4 mr-1" />{' '}
+                {selected.length === 1 ? 'Delete' : 'Bulk Delete'}
               </Button>
             )}
           </div>
@@ -194,7 +241,9 @@ export function DataTable<T extends Record<string, any>>({ data, className, mode
           </div>
         )}
       </div>
-      <div className="flex-1 min-h-0 overflow-auto rounded border border-border"> {/* scrollable area */}
+      <div className="flex-1 min-h-0 overflow-auto rounded border border-border">
+        {' '}
+        {/* scrollable area */}
         <table className="min-w-full divide-y divide-border h-full">
           <thead className="bg-muted sticky top-0 z-10">
             <tr>
@@ -202,7 +251,7 @@ export function DataTable<T extends Record<string, any>>({ data, className, mode
                 <Checkbox
                   ref={selectAllRef}
                   checked={allSelected}
-                  onCheckedChange={checked => {
+                  onCheckedChange={(checked) => {
                     if (checked) {
                       setSelected(allIds);
                     } else {
@@ -213,7 +262,7 @@ export function DataTable<T extends Record<string, any>>({ data, className, mode
                   aria-label="Select all rows"
                 />
               </th>
-              {columns.map(key => (
+              {columns.map((key) => (
                 <th
                   key={key}
                   className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider cursor-pointer select-none bg-muted"
@@ -222,14 +271,20 @@ export function DataTable<T extends Record<string, any>>({ data, className, mode
                 >
                   <div className="flex items-center gap-1">
                     {key}
-                    {sortKey === key && (
-                      sortDir === 'asc' ? <ChevronUpIcon className="w-4 h-4" /> : <ChevronDownIcon className="w-4 h-4" />
-                    )}
+                    {sortKey === key &&
+                      (sortDir === 'asc' ? (
+                        <ChevronUpIcon className="w-4 h-4" />
+                      ) : (
+                        <ChevronDownIcon className="w-4 h-4" />
+                      ))}
                   </div>
                 </th>
               ))}
               {onSingleDelete && (
-                <th className="px-2 py-2 text-left text-xs font-semibold uppercase tracking-wider bg-muted" style={{ position: 'sticky', top: 0, background: 'inherit' }}>
+                <th
+                  className="px-2 py-2 text-left text-xs font-semibold uppercase tracking-wider bg-muted"
+                  style={{ position: 'sticky', top: 0, background: 'inherit' }}
+                >
                   Actions
                 </th>
               )}
@@ -239,35 +294,40 @@ export function DataTable<T extends Record<string, any>>({ data, className, mode
             {filteredData.length === 0 ? (
               <tr>
                 <td />
-                <td colSpan={columns.length + (onSingleDelete ? 1 : 0)} className="text-center py-8 text-muted-foreground">
+                <td
+                  colSpan={columns.length + (onSingleDelete ? 1 : 0)}
+                  className="text-center py-8 text-muted-foreground"
+                >
                   No data found.
                 </td>
               </tr>
             ) : (
               filteredData.map((row, i) => (
-                <tr 
-                  key={i} 
+                <tr
+                  key={i}
                   className={cn(
-                    "hover:bg-accent/30",
-                    modelName && "cursor-pointer"
+                    'hover:bg-accent/30',
+                    modelName && 'cursor-pointer'
                   )}
                   onClick={(e) => handleRowClick(row, e)}
                 >
                   <td className="px-2 py-2">
                     <Checkbox
                       checked={selected.includes(String(row[idKey]))}
-                      onCheckedChange={checked => {
+                      onCheckedChange={(checked) => {
                         if (checked) {
-                          setSelected(prev => [...prev, String(row[idKey])]);
+                          setSelected((prev) => [...prev, String(row[idKey])]);
                         } else {
-                          setSelected(prev => prev.filter(id => id !== String(row[idKey])));
+                          setSelected((prev) =>
+                            prev.filter((id) => id !== String(row[idKey]))
+                          );
                         }
                       }}
                       onClick={(e) => e.stopPropagation()}
                       aria-label="Select row"
                     />
                   </td>
-                  {columns.map(key => {
+                  {columns.map((key) => {
                     const value = row[key];
                     let displayValue: string;
                     if (typeof value === 'object' && value !== null) {
@@ -276,13 +336,20 @@ export function DataTable<T extends Record<string, any>>({ data, className, mode
                       displayValue = String(value ?? '');
                     }
                     const isLong = displayValue.length > 100;
-                    const shownValue = isLong ? displayValue.slice(0, 100) + '…' : displayValue;
-                    
+                    const shownValue = isLong
+                      ? displayValue.slice(0, 100) + '…'
+                      : displayValue;
+
                     // Find the field definition for this column
-                    const fieldDef = modelFields?.find(field => field.name === key);
-                    
+                    const fieldDef = modelFields?.find(
+                      (field) => field.name === key
+                    );
+
                     let cellContent;
-                    if (typeof value === 'string' && value.startsWith('https://')) {
+                    if (
+                      typeof value === 'string' &&
+                      value.startsWith('https://')
+                    ) {
                       cellContent = (
                         <Link
                           to={value}
@@ -298,27 +365,37 @@ export function DataTable<T extends Record<string, any>>({ data, className, mode
                       // Handle DateTime values
                       const date = new Date(value);
                       if (!isNaN(date.getTime())) {
-                        const formatted = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')} ${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}`;
+                        const formatted = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
                         cellContent = (
-                          <Badge variant="secondary" title={value}>{formatted}</Badge>
+                          <Badge variant="secondary" title={value}>
+                            {formatted}
+                          </Badge>
                         );
                       } else {
                         cellContent = (
                           <span title={displayValue}>{shownValue}</span>
                         );
                       }
-                    } else if (fieldDef?.type === 'Boolean' && typeof value === 'boolean') {
+                    } else if (
+                      fieldDef?.type === 'Boolean' &&
+                      typeof value === 'boolean'
+                    ) {
                       // Handle Boolean values
                       cellContent = (
-                        <Badge variant={value ? "default" : "secondary"}>
-                          {value ? "True" : "False"}
+                        <Badge variant={value ? 'default' : 'secondary'}>
+                          {value ? 'True' : 'False'}
                         </Badge>
                       );
                     } else if (fieldDef?.type === 'Json' && value) {
                       // Handle JSON values
-                      const jsonStr = typeof value === 'string' ? value : JSON.stringify(value);
+                      const jsonStr =
+                        typeof value === 'string'
+                          ? value
+                          : JSON.stringify(value);
                       const isLong = jsonStr.length > 50;
-                      const shownJson = isLong ? jsonStr.slice(0, 50) + '…' : jsonStr;
+                      const shownJson = isLong
+                        ? jsonStr.slice(0, 50) + '…'
+                        : jsonStr;
                       cellContent = (
                         <span title={jsonStr} className="font-mono text-xs">
                           {shownJson}
@@ -326,9 +403,11 @@ export function DataTable<T extends Record<string, any>>({ data, className, mode
                       );
                     } else if (value instanceof Date) {
                       // Fallback for actual Date objects
-                      const formatted = `${value.getFullYear()}-${String(value.getMonth()+1).padStart(2,'0')}-${String(value.getDate()).padStart(2,'0')} ${String(value.getHours()).padStart(2,'0')}:${String(value.getMinutes()).padStart(2,'0')}`;
+                      const formatted = `${value.getFullYear()}-${String(value.getMonth() + 1).padStart(2, '0')}-${String(value.getDate()).padStart(2, '0')} ${String(value.getHours()).padStart(2, '0')}:${String(value.getMinutes()).padStart(2, '0')}`;
                       cellContent = (
-                        <Badge variant="secondary" title={value.toISOString()}>{formatted}</Badge>
+                        <Badge variant="secondary" title={value.toISOString()}>
+                          {formatted}
+                        </Badge>
                       );
                     } else {
                       cellContent = (
@@ -336,7 +415,10 @@ export function DataTable<T extends Record<string, any>>({ data, className, mode
                       );
                     }
                     return (
-                      <td key={key} className="px-4 py-2 whitespace-nowrap text-sm max-w-[400px] overflow-hidden text-ellipsis">
+                      <td
+                        key={key}
+                        className="px-4 py-2 whitespace-nowrap text-sm max-w-[400px] overflow-hidden text-ellipsis"
+                      >
                         {cellContent}
                       </td>
                     );
@@ -344,9 +426,9 @@ export function DataTable<T extends Record<string, any>>({ data, className, mode
                   {onSingleDelete && (
                     <td className="px-2 py-2 flex gap-1 items-center">
                       {renderRowActions && renderRowActions(row)}
-                      <Button 
-                        variant="destructive" 
-                        size="icon" 
+                      <Button
+                        variant="destructive"
+                        size="icon"
                         onClick={(e) => {
                           e.stopPropagation();
                           onSingleDelete(String(row[idKey]));
@@ -369,11 +451,18 @@ export function DataTable<T extends Record<string, any>>({ data, className, mode
             <PaginationItem>
               <PaginationLink
                 isActive={false}
-                onClick={e => { e.preventDefault(); if (pagination.hasPrevPage) handlePageChange(pagination.page - 1); }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (pagination.hasPrevPage)
+                    handlePageChange(pagination.page - 1);
+                }}
                 aria-disabled={!pagination.hasPrevPage}
                 tabIndex={!pagination.hasPrevPage ? -1 : 0}
                 href="#"
-                style={{ cursor: pagination.hasPrevPage ? 'pointer' : 'not-allowed', opacity: pagination.hasPrevPage ? 1 : 0.5 }}
+                style={{
+                  cursor: pagination.hasPrevPage ? 'pointer' : 'not-allowed',
+                  opacity: pagination.hasPrevPage ? 1 : 0.5,
+                }}
               >
                 <ChevronLeftIcon className="w-4 h-4" />
               </PaginationLink>
@@ -389,7 +478,10 @@ export function DataTable<T extends Record<string, any>>({ data, className, mode
                     <PaginationItem key={i}>
                       <PaginationLink
                         isActive={page === i}
-                        onClick={e => { e.preventDefault(); handlePageChange(i); }}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handlePageChange(i);
+                        }}
                         href="#"
                         style={{ cursor: 'pointer' }}
                       >
@@ -407,7 +499,11 @@ export function DataTable<T extends Record<string, any>>({ data, className, mode
                 if (showLeftEllipsis) {
                   pageNumbers.push('left-ellipsis');
                 }
-                for (let i = Math.max(2, page - 1); i <= Math.min(totalPages - 1, page + 1); i++) {
+                for (
+                  let i = Math.max(2, page - 1);
+                  i <= Math.min(totalPages - 1, page + 1);
+                  i++
+                ) {
                   if (i !== 1 && i !== totalPages) pageNumbers.push(i);
                 }
                 if (showRightEllipsis) {
@@ -426,7 +522,10 @@ export function DataTable<T extends Record<string, any>>({ data, className, mode
                       <PaginationItem key={p}>
                         <PaginationLink
                           isActive={page === p}
-                          onClick={e => { e.preventDefault(); handlePageChange(Number(p)); }}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handlePageChange(Number(p));
+                          }}
                           href="#"
                           style={{ cursor: 'pointer' }}
                         >
@@ -442,23 +541,35 @@ export function DataTable<T extends Record<string, any>>({ data, className, mode
             <PaginationItem>
               <PaginationLink
                 isActive={false}
-                onClick={e => { e.preventDefault(); if (pagination.hasNextPage) handlePageChange(pagination.page + 1); }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (pagination.hasNextPage)
+                    handlePageChange(pagination.page + 1);
+                }}
                 aria-disabled={!pagination.hasNextPage}
                 tabIndex={!pagination.hasNextPage ? -1 : 0}
                 href="#"
-                style={{ cursor: pagination.hasNextPage ? 'pointer' : 'not-allowed', opacity: pagination.hasNextPage ? 1 : 0.5 }}
+                style={{
+                  cursor: pagination.hasNextPage ? 'pointer' : 'not-allowed',
+                  opacity: pagination.hasNextPage ? 1 : 0.5,
+                }}
               >
                 <ChevronRightIcon className="w-4 h-4" />
               </PaginationLink>
             </PaginationItem>
             <PaginationItem>
-              <Select value={String(pagination.take)} onValueChange={val => handleTakeChange(Number(val))}>
+              <Select
+                value={String(pagination.take)}
+                onValueChange={(val) => handleTakeChange(Number(val))}
+              >
                 <SelectTrigger className="ml-4 w-24">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {[5, 10, 20, 50, 100].map(n => (
-                    <SelectItem key={n} value={String(n)}>{n}</SelectItem>
+                  {[5, 10, 20, 50, 100].map((n) => (
+                    <SelectItem key={n} value={String(n)}>
+                      {n}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -470,4 +581,4 @@ export function DataTable<T extends Record<string, any>>({ data, className, mode
   );
 }
 
-export default DataTable; 
+export default DataTable;

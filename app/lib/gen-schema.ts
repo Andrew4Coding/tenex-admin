@@ -1,18 +1,22 @@
 import type { ZodTypeAny } from 'zod';
 import { z } from 'zod';
-import type { prismaModelField } from "~/types";
+import type { prismaModelField } from '~/types';
 
 const typeMap: Record<string, () => ZodTypeAny> = {
   String: () => z.string(),
   Int: () => z.number().int(),
   Float: () => z.number(),
   Boolean: () => z.boolean(),
-  DateTime: () => z.string().refine(
-    val => /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(val) || !isNaN(Date.parse(val)),
-    {
-      message: 'Invalid datetime format',
-    }
-  ),
+  DateTime: () =>
+    z
+      .string()
+      .refine(
+        (val) =>
+          /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(val) || !isNaN(Date.parse(val)),
+        {
+          message: 'Invalid datetime format',
+        }
+      ),
   BigInt: () => z.string(), // BigInt as string
   Decimal: () => z.string(), // Decimal as string
   Json: () => z.any(),
@@ -22,7 +26,11 @@ const typeMap: Record<string, () => ZodTypeAny> = {
 };
 
 function fieldToZod(field: prismaModelField): ZodTypeAny {
-  if (field.kind === 'enum' && Array.isArray(field.options) && field.options.length > 0) {
+  if (
+    field.kind === 'enum' &&
+    Array.isArray(field.options) &&
+    field.options.length > 0
+  ) {
     return z.enum([...field.options]);
   }
   // Special handling for required string lists

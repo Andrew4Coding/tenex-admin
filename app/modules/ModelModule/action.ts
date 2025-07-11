@@ -1,5 +1,5 @@
-import { prisma } from "prisma/prisma";
-import type { ActionFunctionArgs } from "react-router";
+import { prisma } from 'prisma/prisma';
+import type { ActionFunctionArgs } from 'react-router';
 
 export async function ModelAction({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
@@ -9,7 +9,10 @@ export async function ModelAction({ request }: ActionFunctionArgs) {
     const model = formData.get('model') as string;
     const data = formData.get('data') as string;
 
-    if (!(model in prisma) || typeof (prisma as any)[model]?.create !== 'function') {
+    if (
+      !(model in prisma) ||
+      typeof (prisma as any)[model]?.create !== 'function'
+    ) {
       return { success: false, error: 'Invalid model' };
     }
 
@@ -19,19 +22,22 @@ export async function ModelAction({ request }: ActionFunctionArgs) {
 
     try {
       const parsedData = JSON.parse(data);
-      
+
       // Add createdAt and updatedAt if they don't exist
       const dataWithTimestamps = {
         ...parsedData,
         updatedAt: parsedData.updatedAt || new Date(),
       };
-      
+
       await (prisma as any)[model].create({
         data: dataWithTimestamps,
       });
       return { success: true };
     } catch (error: any) {
-      return { success: false, error: error.message || 'Failed to create item' };
+      return {
+        success: false,
+        error: error.message || 'Failed to create item',
+      };
     }
   }
 
@@ -39,7 +45,10 @@ export async function ModelAction({ request }: ActionFunctionArgs) {
     const model = formData.get('model') as string;
     const id = formData.get('id') as string;
 
-    if (!(model in prisma) || typeof (prisma as any)[model]?.delete !== 'function') {
+    if (
+      !(model in prisma) ||
+      typeof (prisma as any)[model]?.delete !== 'function'
+    ) {
       return { success: false, error: 'Invalid model' };
     }
 
@@ -49,7 +58,10 @@ export async function ModelAction({ request }: ActionFunctionArgs) {
       });
       return { success: true };
     } catch (error: any) {
-      return { success: false, error: error.message || 'Failed to delete item' };
+      return {
+        success: false,
+        error: error.message || 'Failed to delete item',
+      };
     }
   }
 
@@ -57,7 +69,10 @@ export async function ModelAction({ request }: ActionFunctionArgs) {
     const model = formData.get('model') as string;
     const ids = formData.getAll('ids') as string[];
 
-    if (!(model in prisma) || typeof (prisma as any)[model]?.deleteMany !== 'function') {
+    if (
+      !(model in prisma) ||
+      typeof (prisma as any)[model]?.deleteMany !== 'function'
+    ) {
       return { success: false, error: 'Invalid model' };
     }
 
@@ -75,7 +90,10 @@ export async function ModelAction({ request }: ActionFunctionArgs) {
       });
       return { success: true, deletedCount: ids.length };
     } catch (error: any) {
-      return { success: false, error: error.message || 'Failed to delete items' };
+      return {
+        success: false,
+        error: error.message || 'Failed to delete items',
+      };
     }
   }
 
@@ -84,7 +102,10 @@ export async function ModelAction({ request }: ActionFunctionArgs) {
     const id = formData.get('id') as string;
     const data = formData.get('data') as string;
 
-    if (!(model in prisma) || typeof (prisma as any)[model]?.update !== 'function') {
+    if (
+      !(model in prisma) ||
+      typeof (prisma as any)[model]?.update !== 'function'
+    ) {
       return { success: false, error: 'Invalid model' };
     }
 
@@ -105,7 +126,10 @@ export async function ModelAction({ request }: ActionFunctionArgs) {
       });
       return { success: true };
     } catch (error: any) {
-      return { success: false, error: error.message || 'Failed to update item' };
+      return {
+        success: false,
+        error: error.message || 'Failed to update item',
+      };
     }
   }
 
@@ -113,7 +137,10 @@ export async function ModelAction({ request }: ActionFunctionArgs) {
     const model = formData.get('model') as string;
     const search = formData.get('search') as string | null;
 
-    if (!(model in prisma) || typeof (prisma as any)[model]?.findMany !== 'function') {
+    if (
+      !(model in prisma) ||
+      typeof (prisma as any)[model]?.findMany !== 'function'
+    ) {
       return { success: false, error: 'Invalid model' };
     }
 
@@ -122,7 +149,9 @@ export async function ModelAction({ request }: ActionFunctionArgs) {
       const prismaMetaData = (prisma as any)._runtimeDataModel;
       const modelMetadata = prismaMetaData.models[model];
       const stringFields = modelMetadata.fields
-        .filter((field: any) => field.kind === 'scalar' && field.type === 'String')
+        .filter(
+          (field: any) => field.kind === 'scalar' && field.type === 'String'
+        )
         .map((field: any) => field.name);
       const where = search
         ? {
@@ -137,7 +166,10 @@ export async function ModelAction({ request }: ActionFunctionArgs) {
       const rows = await (prisma as any)[model].findMany({ where });
       return { success: true, rows };
     } catch (error: any) {
-      return { success: false, error: error.message || 'Failed to export data' };
+      return {
+        success: false,
+        error: error.message || 'Failed to export data',
+      };
     }
   }
 

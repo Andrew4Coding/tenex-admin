@@ -1,6 +1,13 @@
 import { Upload } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { useFetcher, useLoaderData, useNavigate, useParams, useRevalidator, useSearchParams } from 'react-router';
+import {
+  useFetcher,
+  useLoaderData,
+  useNavigate,
+  useParams,
+  useRevalidator,
+  useSearchParams,
+} from 'react-router';
 import { toast } from 'sonner';
 import { Button } from '~/components/ui/button';
 import DataTable from '~/components/ui/data-table';
@@ -13,7 +20,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from '~/components/ui/dialog';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '~/components/ui/dropdown-menu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '~/components/ui/dropdown-menu';
 import { useDebounce } from '~/hooks/use-debounce';
 import { AddItemDialog } from './AddItemDialog';
 import { EditItemDialog } from './EditItemDialog';
@@ -46,7 +58,9 @@ export const ModelModule = () => {
     navigate({ search: params.toString() });
   };
 
-  const handleTakeChange = (e: React.ChangeEvent<HTMLSelectElement> | number) => {
+  const handleTakeChange = (
+    e: React.ChangeEvent<HTMLSelectElement> | number
+  ) => {
     const params = new URLSearchParams(searchParams);
     const take = typeof e === 'number' ? e : Number(e.target.value);
     params.set('take', String(take));
@@ -104,7 +118,7 @@ export const ModelModule = () => {
     const formData = new FormData();
     formData.append('intent', 'delete-bulk');
     formData.append('model', param.model || '');
-    itemsToDelete.forEach(id => {
+    itemsToDelete.forEach((id) => {
       formData.append('ids', id);
     });
 
@@ -134,7 +148,9 @@ export const ModelModule = () => {
     const keys = Object.keys(data[0]);
     const csvRows = [
       keys.join(','),
-      ...data.map(row => keys.map(k => JSON.stringify(row[k] ?? '')).join(','))
+      ...data.map((row) =>
+        keys.map((k) => JSON.stringify(row[k] ?? '')).join(',')
+      ),
     ];
     const csvContent = csvRows.join('\n');
     const blob = new Blob([csvContent], { type: 'text/csv' });
@@ -176,7 +192,10 @@ export const ModelModule = () => {
     if (exportFetcher.data && exportLoading) {
       setExportLoading(false);
       setExportType(null);
-      if (exportFetcher.data.success && Array.isArray(exportFetcher.data.rows)) {
+      if (
+        exportFetcher.data.success &&
+        Array.isArray(exportFetcher.data.rows)
+      ) {
         exportToCSV(exportFetcher.data.rows, `${param.model}-export.csv`);
       } else {
         toast.error(exportFetcher.data.error || 'Failed to export data');
@@ -186,7 +205,7 @@ export const ModelModule = () => {
 
   return (
     <div className="flex flex-col h-full">
-      <div className='flex items-center justify-between'>
+      <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold mb-4 flex-shrink-0">{param.model}</h1>
         <div className="flex items-center gap-2">
           <DropdownMenu>
@@ -197,7 +216,10 @@ export const ModelModule = () => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={handleExportCSV} disabled={exportLoading}>
+              <DropdownMenuItem
+                onClick={handleExportCSV}
+                disabled={exportLoading}
+              >
                 Export to CSV
               </DropdownMenuItem>
               <DropdownMenuItem disabled>
@@ -217,17 +239,25 @@ export const ModelModule = () => {
               <DialogTitle>Export Data</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
-              <p>Do you want to export the current filtered data or the whole data?</p>
+              <p>
+                Do you want to export the current filtered data or the whole
+                data?
+              </p>
               <div className="flex gap-2 justify-end">
                 <DialogClose asChild>
-                  <Button variant="ghost">
-                    Cancel
-                  </Button>
+                  <Button variant="ghost">Cancel</Button>
                 </DialogClose>
-                <Button onClick={() => doExport('filtered')} disabled={exportLoading}>
+                <Button
+                  onClick={() => doExport('filtered')}
+                  disabled={exportLoading}
+                >
                   Export Filtered
                 </Button>
-                <Button onClick={() => doExport('all')} disabled={exportLoading} variant="secondary">
+                <Button
+                  onClick={() => doExport('all')}
+                  disabled={exportLoading}
+                  variant="secondary"
+                >
                   Export All
                 </Button>
               </div>
@@ -242,7 +272,9 @@ export const ModelModule = () => {
         modelFields={modelFields}
         pagination={pagination}
         onPageChange={handlePageChange}
-        onTakeChange={n => handleTakeChange({ target: { value: String(n) } } as any)}
+        onTakeChange={(n) =>
+          handleTakeChange({ target: { value: String(n) } } as any)
+        }
         search={search}
         onSearchChange={handleSearchChange}
         onSingleDelete={handleSingleDelete}
@@ -264,18 +296,27 @@ export const ModelModule = () => {
       />
 
       {/* Single Delete Confirmation Dialog */}
-      <Dialog open={showSingleDeleteDialog} onOpenChange={setShowSingleDeleteDialog}>
+      <Dialog
+        open={showSingleDeleteDialog}
+        onOpenChange={setShowSingleDeleteDialog}
+      >
         <DialogContent showCloseButton={false}>
           <DialogHeader>
             <DialogTitle>Are you absolutely sure?</DialogTitle>
             <DialogDescription>
               This action cannot be undone. This will permanently delete the{' '}
               <span className="font-semibold">{param.model}</span> item with ID{' '}
-              <span className="font-mono bg-muted px-1 rounded">{itemToDelete}</span>.
+              <span className="font-mono bg-muted px-1 rounded">
+                {itemToDelete}
+              </span>
+              .
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowSingleDeleteDialog(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setShowSingleDeleteDialog(false)}
+            >
               Cancel
             </Button>
             <Button
@@ -290,18 +331,25 @@ export const ModelModule = () => {
       </Dialog>
 
       {/* Bulk Delete Confirmation Dialog */}
-      <Dialog open={showBulkDeleteDialog} onOpenChange={setShowBulkDeleteDialog}>
+      <Dialog
+        open={showBulkDeleteDialog}
+        onOpenChange={setShowBulkDeleteDialog}
+      >
         <DialogContent showCloseButton={false}>
           <DialogHeader>
             <DialogTitle>Are you absolutely sure?</DialogTitle>
             <DialogDescription>
               This action cannot be undone. This will permanently delete{' '}
-              <span className="font-semibold">{itemsToDelete.length}</span> selected{' '}
-              <span className="font-semibold">{param.model}</span> {itemsToDelete.length === 1 ? 'item' : 'items'}.
+              <span className="font-semibold">{itemsToDelete.length}</span>{' '}
+              selected <span className="font-semibold">{param.model}</span>{' '}
+              {itemsToDelete.length === 1 ? 'item' : 'items'}.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowBulkDeleteDialog(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setShowBulkDeleteDialog(false)}
+            >
               Cancel
             </Button>
             <Button
@@ -309,11 +357,13 @@ export const ModelModule = () => {
               onClick={confirmBulkDelete}
               disabled={fetcher.state === 'submitting'}
             >
-              {fetcher.state === 'submitting' ? 'Deleting...' : `Delete ${itemsToDelete.length} ${itemsToDelete.length === 1 ? 'item' : 'items'}`}
+              {fetcher.state === 'submitting'
+                ? 'Deleting...'
+                : `Delete ${itemsToDelete.length} ${itemsToDelete.length === 1 ? 'item' : 'items'}`}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
-  )
-}
+  );
+};

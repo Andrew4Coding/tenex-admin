@@ -6,7 +6,8 @@ export const LandingModule = ({ modelsCount }: { modelsCount?: number }) => {
     <main className="min-h-[60vh] flex flex-col items-center justify-center gap-8 p-8">
       <h1 className="text-3xl font-bold mb-2">Welcome to Tenex Admin</h1>
       <p className="text-muted-foreground mb-6 text-center max-w-xl">
-        Manage your database models, run queries, and explore your data with a clean, minimal interface.
+        Manage your database models, run queries, and explore your data with a
+        clean, minimal interface.
       </p>
       <div className="flex flex-col sm:flex-row gap-6 w-full max-w-2xl justify-center">
         <div className="flex-1 bg-card rounded-lg shadow p-6 flex flex-col items-center justify-center">

@@ -1,7 +1,5 @@
-import React from 'react'
+import React from 'react';
 
 export const LoginModule = () => {
-  return (
-    <main>login</main>
-  )
-}
+  return <main>login</main>;
+};

@@ -1,7 +1,4 @@
-import type {
-  ActionFunctionArgs,
-  LoaderFunctionArgs,
-} from 'react-router';
+import type { ActionFunctionArgs, LoaderFunctionArgs } from 'react-router';
 import { RegisterModule } from '~/modules/RegisterModule';
 import { RegisterAction } from '~/modules/RegisterModule/action';
 import { RegisterLoader } from '~/modules/RegisterModule/loader';

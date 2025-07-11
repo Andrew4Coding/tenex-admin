@@ -5,7 +5,6 @@ export function ThemeToggler() {
   const { theme, setTheme } = useTheme();
 
   return (
-
     <div className="flex relative w-[48px]">
       <div
         className="flex relative w-full h-fit border-[2px] border-[#1A2223] rounded-[21px] md:rounded-[24px] cursor-pointer items-center"

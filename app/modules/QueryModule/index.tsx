@@ -18,7 +18,12 @@ export const QueryModule = () => {
     const trimmed = value.trim();
     if (!trimmed) return 'SQL query cannot be empty.';
     if (!/^select\s+/i.test(trimmed)) return 'Only SELECT queries are allowed.';
-    if (/;|--|\/\*|drop|delete|update|insert|alter|create|grant|revoke|truncate/i.test(trimmed)) return 'Unsafe SQL query detected. Only simple SELECT queries are allowed.';
+    if (
+      /;|--|\/\*|drop|delete|update|insert|alter|create|grant|revoke|truncate/i.test(
+        trimmed
+      )
+    )
+      return 'Unsafe SQL query detected. Only simple SELECT queries are allowed.';
     return null;
   };
 
@@ -41,14 +46,18 @@ export const QueryModule = () => {
   };
 
   useEffect(() => {
-    console.log("HELLO!");
-    
+    console.log('HELLO!');
+
     if (fetcher.data) {
       if (fetcher.data.success) {
         toast.success('Query executed successfully!');
       } else {
-        setError(fetcher.data.error || 'An error occurred while executing the query.');
-        toast.error(fetcher.data.error || 'An error occurred while executing the query.');
+        setError(
+          fetcher.data.error || 'An error occurred while executing the query.'
+        );
+        toast.error(
+          fetcher.data.error || 'An error occurred while executing the query.'
+        );
       }
 
       revalidator.revalidate();
@@ -70,7 +79,7 @@ export const QueryModule = () => {
             name="sql"
           />
           {(error || fetcher.data?.error) && (
-            <Alert variant="destructive" >
+            <Alert variant="destructive">
               <AlertCircleIcon />
               <AlertTitle>Error</AlertTitle>
               <AlertDescription>
@@ -78,21 +87,19 @@ export const QueryModule = () => {
               </AlertDescription>
             </Alert>
           )}
-          <Button disabled={fetcher.state === 'submitting' || !sql.trim()} onClick={handleSubmit}>
+          <Button
+            disabled={fetcher.state === 'submitting' || !sql.trim()}
+            onClick={handleSubmit}
+          >
             <Play />
             {fetcher.state === 'submitting' ? 'Running...' : 'Run Query'}
           </Button>
         </div>
       </div>
 
-      <section className='block mt-4'>
-        {results && (
-          <DataTable
-            data={results}
-            isSearchDisabled
-          />
-        )}
+      <section className="block mt-4">
+        {results && <DataTable data={results} isSearchDisabled />}
       </section>
     </main>
-  )
-}
+  );
+};

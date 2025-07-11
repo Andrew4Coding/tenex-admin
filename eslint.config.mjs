@@ -55,6 +55,8 @@ export default [
       '@typescript-eslint/no-non-null-asserted-optional-chain': 'warn',
       'no-empty': 'warn',
       '@typescript-eslint/no-extra-non-null-assertion': 'warn',
+      '@typescript-eslint/no-explicit-any': 'warn',
+      'react/no-unescaped-entities': 'warn',
     },
   },
 ];

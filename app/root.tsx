@@ -33,7 +33,7 @@ export const links: Route.LinksFunction = () => [
   },
   {
     rel: 'stylesheet',
-    href: 'https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=TikTok+Sans:opsz,wght@12..36,300..900&display=swap'
+    href: 'https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=TikTok+Sans:opsz,wght@12..36,300..900&display=swap',
   },
 ];
 
@@ -59,10 +59,10 @@ export default function App() {
   return <Outlet />;
 }
 
-export async function loader() { 
+export async function loader() {
   return data({
-    auth_url: ENV.BACKEND_URL
-  })
+    auth_url: ENV.BACKEND_URL,
+  });
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
@@ -86,25 +86,23 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
 
   return (
     <MainLayout>
-      <div className='text-center space-y-4'>
+      <div className="text-center space-y-4">
         <div>
-          <h1 className='text-2xl font-bold'>{message}</h1>
-          <p className='text-gray-500'>{details}</p>
+          <h1 className="text-2xl font-bold">{message}</h1>
+          <p className="text-gray-500">{details}</p>
         </div>
-        {stack && (
-          <pre className='text-sm max-h-96 overflow-auto'>
-            {stack}
-          </pre>
-        )}
-        <div className='grid grid-cols-2 gap-4'>
-          <Button variant='outline' onClick={() => navigate(0)} className='w-full'>
+        {stack && <pre className="text-sm max-h-96 overflow-auto">{stack}</pre>}
+        <div className="grid grid-cols-2 gap-4">
+          <Button
+            variant="outline"
+            onClick={() => navigate(0)}
+            className="w-full"
+          >
             <RefreshCcw />
             Reload
           </Button>
           <Link to={'/'}>
-            <Button className='w-full'>
-              I don't give a f*ck
-            </Button>
+            <Button className="w-full">I don't give a f*ck</Button>
           </Link>
         </div>
       </div>
