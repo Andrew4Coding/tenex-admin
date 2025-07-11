@@ -1,8 +1,9 @@
 import { useLoaderData, useParams, useNavigate, useSearchParams } from 'react-router';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import DataTable from '~/components/ui/data-table';
 import { AddItemDialog } from './AddItemDialog';
 import { ModelLoader } from './loader';
+import { useDebounce } from '~/hooks/use-debounce';
 
 export const ModelModule = () => {
   const { modelFindMany, modelFields, pagination } = useLoaderData();
@@ -10,6 +11,9 @@ export const ModelModule = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [search, setSearch] = useState(searchParams.get('search') || '');
+  
+  // Debounce the search value to prevent excessive API calls
+  const debouncedSearch = useDebounce(search, 300);
 
   const handlePageChange = (newPage: number) => {
     const params = new URLSearchParams(searchParams);
@@ -27,16 +31,20 @@ export const ModelModule = () => {
 
   const handleSearchChange = useCallback((value: string) => {
     setSearch(value);
+  }, []);
+
+  // Effect to update URL when debounced search changes
+  useEffect(() => {
     const params = new URLSearchParams(searchParams);
-    if (value) {
-      params.set('search', value);
+    if (debouncedSearch) {
+      params.set('search', debouncedSearch);
       params.set('page', '1');
     } else {
       params.delete('search');
       params.set('page', '1');
     }
     navigate({ search: params.toString() });
-  }, [navigate, searchParams]);
+  }, [debouncedSearch, navigate, searchParams]);
 
   return (
     <div className="flex flex-col h-full">
