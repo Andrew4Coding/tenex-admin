@@ -1,5 +1,4 @@
-import type { LoaderFunctionArgs } from 'react-router';
+import { type LoaderFunctionArgs } from 'react-router';
 
 export async function SettingsLoader({ request }: LoaderFunctionArgs) {
-  return null;
 }
