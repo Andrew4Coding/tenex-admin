@@ -109,5 +109,37 @@ export async function ModelAction({ request }: ActionFunctionArgs) {
     }
   }
 
+  if (intent === 'export-csv') {
+    const model = formData.get('model') as string;
+    const search = formData.get('search') as string | null;
+
+    if (!(model in prisma) || typeof (prisma as any)[model]?.findMany !== 'function') {
+      return { success: false, error: 'Invalid model' };
+    }
+
+    try {
+      // Get searchable string fields
+      const prismaMetaData = (prisma as any)._runtimeDataModel;
+      const modelMetadata = prismaMetaData.models[model];
+      const stringFields = modelMetadata.fields
+        .filter((field: any) => field.kind === 'scalar' && field.type === 'String')
+        .map((field: any) => field.name);
+      const where = search
+        ? {
+            OR: stringFields.map((field: string) => ({
+              [field]: {
+                contains: search,
+                mode: 'insensitive',
+              },
+            })),
+          }
+        : undefined;
+      const rows = await (prisma as any)[model].findMany({ where });
+      return { success: true, rows };
+    } catch (error: any) {
+      return { success: false, error: error.message || 'Failed to export data' };
+    }
+  }
+
   return { success: false, error: 'Invalid intent' };
 }
