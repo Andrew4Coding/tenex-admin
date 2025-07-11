@@ -1,5 +1,5 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from 'react-router'
-import { auth } from '~/lib/auth.server' // Adjust the path as necessary
+import { auth } from '~/lib/auth' // Adjust the path as necessary
 
 export async function loader({ request }: LoaderFunctionArgs) {
     return auth.handler(request)

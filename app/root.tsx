@@ -15,7 +15,7 @@ import type { Route } from './+types/root';
 import './app.css';
 import { Button } from './components/ui/button';
 import { ENV } from './lib/env';
-import { MainLayout } from './routes/_page';
+import { MainLayout } from './routes/_page._dashboard';
 
 export function meta({}: Route.MetaArgs) {
   return [
