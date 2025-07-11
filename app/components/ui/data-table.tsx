@@ -142,7 +142,7 @@ export function DataTable<T extends Record<string, any>>({ data, className, mode
 
     if (modelName) {
       const primaryKey = String(row[idKey]);
-      navigate(`/${modelName}/${primaryKey}`);
+      navigate(`/models/${modelName}/${primaryKey}`);
     }
   };
 

@@ -74,7 +74,7 @@ export function AppSidebar({ models }: { models?: string[] }) {
             e.preventDefault();
             const model = filteredModels[activeIndex];
             if (model) {
-                navigate(`/${model}`);
+                navigate(`/models/${model}`);
             }
         }
     };
@@ -140,7 +140,7 @@ export function AppSidebar({ models }: { models?: string[] }) {
                                     <div className="px-3 py-2 text-muted-foreground text-sm">No models found</div>
                                 ) : (
                                     filteredModels.map((model, idx) => {
-                                        const modelHref = `/${model}`;
+                                        const modelHref = `/models/${model}`;
                                         const isActive = pathname === modelHref || pathname.startsWith(modelHref + "/");
                                         return (
                                             <SidebarMenuItem key={model}>
