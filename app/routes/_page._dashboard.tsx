@@ -4,6 +4,7 @@ import {
   isRouteErrorResponse,
   Link,
   Outlet,
+  redirect,
   useLoaderData,
   useNavigate,
   useNavigation,
@@ -14,11 +15,20 @@ import { AppSidebar } from '~/components/ui/app-sidebar';
 import { Button } from '~/components/ui/button';
 import { SidebarProvider, SidebarTrigger } from '~/components/ui/sidebar';
 import { ThemeToggler } from '~/components/ui/ThemeToggler';
+import { auth } from '~/lib/auth';
 import type { Route } from '../+types/root';
 
 export async function loader(
   args: LoaderFunctionArgs
-): Promise<{ models: string[] }> {
+) {
+
+  // Get current user
+  const session = await auth.api.getSession(args.request);
+
+  if (!session?.user) {
+    return redirect('/login');
+  }
+
   // List models from prisma psql
   const prisma = new PrismaClient();
   const query: { table_name: string }[] =

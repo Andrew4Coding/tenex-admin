@@ -12,6 +12,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '~/components/ui/sidebar';
+import { getAuthClient } from '~/lib/auth.client';
 import { Button } from './button';
 import { Input } from './input';
 
@@ -100,6 +101,14 @@ export function AppSidebar({ models }: { models?: string[] }) {
       }
     }, 0);
   };
+
+  const handleLogout = async () => { 
+    const authClient = getAuthClient();
+
+    await authClient.signOut();
+
+    navigate('/login', { replace: true });
+  }
 
   return (
     <Sidebar>
@@ -209,7 +218,9 @@ export function AppSidebar({ models }: { models?: string[] }) {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter className="p-4">
-        <Button>Log Out</Button>
+        <Button
+          onClick={handleLogout}
+        >Log Out</Button>
       </SidebarFooter>
     </Sidebar>
   );
