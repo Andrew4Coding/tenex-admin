@@ -302,26 +302,28 @@ export function AddItemDialog({ modelFields, modelName, onSuccess }: {
                                           <CommandEmpty>No {isForeignKey ? 'foreign key' : 'id'} found.</CommandEmpty>
                                           <CommandGroup>
                                             <ScrollArea className="h-64">
-                                              {options.map((option: string) => (
-                                                <CommandItem
-                                                  key={option}
-                                                  value={option}
-                                                  onSelect={() => {
-                                                    f.onChange(option);
-                                                    setOpen(false);
-                                                  }}
-                                                >
-                                                  <CheckIcon
-                                                    className={cn(
-                                                      "mr-2 h-4 w-4",
-                                                      selected === option ? "opacity-100" : "opacity-0"
-                                                    )}
-                                                  />
-                                                  <span className='max-w-[200px] text-ellipsis line-clamp-1'>
-                                                    {option}
-                                                  </span>
-                                                </CommandItem>
-                                              ))}
+                                              <div>
+                                                {options.map((option: string) => (
+                                                  <CommandItem
+                                                    key={option}
+                                                    value={option}
+                                                    onSelect={() => {
+                                                      f.onChange(option);
+                                                      setOpen(false);
+                                                    }}
+                                                  >
+                                                    <CheckIcon
+                                                      className={cn(
+                                                        "mr-2 h-4 w-4",
+                                                        selected === option ? "opacity-100" : "opacity-0"
+                                                      )}
+                                                    />
+                                                    <span className='max-w-[200px] text-ellipsis line-clamp-1'>
+                                                      {option}
+                                                    </span>
+                                                  </CommandItem>
+                                                ))}
+                                              </div>
                                             </ScrollArea>
                                           </CommandGroup>
                                         </CommandList>
