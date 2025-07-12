@@ -1,4 +1,4 @@
-import { Box, Code2, Home, Settings, User } from 'lucide-react';
+import { Box, Code2, Home, Plus, Settings, User } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router';
 import {
@@ -42,7 +42,7 @@ const SETTINGS_ITEMS = [
   },
 ];
 
-export function AppSidebar({ models }: { models?: string[] }) {
+export function AppSidebar({ models, dashboards }: { models?: string[], dashboards?: { name: string, id: string }[] }) {
   const [search, setSearch] = useState('');
   const [activeIndex, setActiveIndex] = useState<number>(-1);
   const filteredModels = useMemo(() => {
@@ -102,7 +102,7 @@ export function AppSidebar({ models }: { models?: string[] }) {
     }, 0);
   };
 
-  const handleLogout = async () => { 
+  const handleLogout = async () => {
     const authClient = getAuthClient();
 
     await authClient.signOut();
@@ -135,6 +135,34 @@ export function AppSidebar({ models }: { models?: string[] }) {
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </div>
+          <div>
+            <SidebarGroupLabel>Dashboards</SidebarGroupLabel>
+            <SidebarGroupContent className="max-h-96 overflow-auto">
+              <SidebarMenu>
+                {dashboards?.length! > 0 && dashboards?.map((item) => (
+                  <SidebarMenuItem key={item.id}>
+                    <SidebarMenuButton asChild>
+                      <Link
+                        to={`/dashboards/${item.id}`}
+                        className={
+                          pathname === `/dashboards/${item.id}`
+                            ? 'bg-accent text-accent-foreground rounded'
+                            : ''
+                        }
+                      >
+                        <span>{item.name}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+
+                <Button variant="outline" className="w-full">
+                  <Plus />
+                  Create Dashboard
+                </Button>
               </SidebarMenu>
             </SidebarGroupContent>
           </div>

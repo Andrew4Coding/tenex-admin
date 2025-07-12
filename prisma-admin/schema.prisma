@@ -100,3 +100,39 @@ model UserModelPermission {
 
   model String
 }
+
+enum VISIBILITY {
+  PUBLIC
+  PRIVATE
+  PROTECTED
+}
+
+// Dashboard Model
+model Dashboard {
+  id String @id @default(uuid())
+  name String
+  description String?
+
+  visibility VISIBILITY @default(PUBLIC)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("dashboard")
+  DashboardWidget DashboardWidget[]
+}
+
+model DashboardWidget {
+  id String @id @default(uuid())
+  name String
+  type String
+  config Json
+
+  dashboardId String
+  dashboard Dashboard @relation(fields: [dashboardId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("dashboard_widget")
+}
