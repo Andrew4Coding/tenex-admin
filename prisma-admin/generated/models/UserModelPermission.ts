@@ -213,17 +213,17 @@ export type UserModelPermissionOrderByWithRelationInput = {
 
 export type UserModelPermissionWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  allowedUserId?: string
   AND?: Prisma.UserModelPermissionWhereInput | Prisma.UserModelPermissionWhereInput[]
   OR?: Prisma.UserModelPermissionWhereInput[]
   NOT?: Prisma.UserModelPermissionWhereInput | Prisma.UserModelPermissionWhereInput[]
+  allowedUserId?: Prisma.StringFilter<"UserModelPermission"> | string
   canCreate?: Prisma.BoolFilter<"UserModelPermission"> | boolean
   canRead?: Prisma.BoolFilter<"UserModelPermission"> | boolean
   canUpdate?: Prisma.BoolFilter<"UserModelPermission"> | boolean
   canDelete?: Prisma.BoolFilter<"UserModelPermission"> | boolean
   model?: Prisma.StringFilter<"UserModelPermission"> | string
   allowedUser?: Prisma.XOR<Prisma.AllowedUserScalarRelationFilter, Prisma.AllowedUserWhereInput>
-}, "id" | "allowedUserId">
+}, "id">
 
 export type UserModelPermissionOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -252,7 +252,7 @@ export type UserModelPermissionScalarWhereWithAggregatesInput = {
 }
 
 export type UserModelPermissionCreateInput = {
-  id: string
+  id?: string
   canCreate?: boolean
   canRead?: boolean
   canUpdate?: boolean
@@ -262,7 +262,7 @@ export type UserModelPermissionCreateInput = {
 }
 
 export type UserModelPermissionUncheckedCreateInput = {
-  id: string
+  id?: string
   allowedUserId: string
   canCreate?: boolean
   canRead?: boolean
@@ -292,7 +292,7 @@ export type UserModelPermissionUncheckedUpdateInput = {
 }
 
 export type UserModelPermissionCreateManyInput = {
-  id: string
+  id?: string
   allowedUserId: string
   canCreate?: boolean
   canRead?: boolean
@@ -403,7 +403,7 @@ export type UserModelPermissionUncheckedUpdateManyWithoutAllowedUserNestedInput 
 }
 
 export type UserModelPermissionCreateWithoutAllowedUserInput = {
-  id: string
+  id?: string
   canCreate?: boolean
   canRead?: boolean
   canUpdate?: boolean
@@ -412,7 +412,7 @@ export type UserModelPermissionCreateWithoutAllowedUserInput = {
 }
 
 export type UserModelPermissionUncheckedCreateWithoutAllowedUserInput = {
-  id: string
+  id?: string
   canCreate?: boolean
   canRead?: boolean
   canUpdate?: boolean
@@ -460,7 +460,7 @@ export type UserModelPermissionScalarWhereInput = {
 }
 
 export type UserModelPermissionCreateManyAllowedUserInput = {
-  id: string
+  id?: string
   canCreate?: boolean
   canRead?: boolean
   canUpdate?: boolean

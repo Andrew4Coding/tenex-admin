@@ -1,5 +1,5 @@
 import { Cog, Puzzle, Users } from 'lucide-react';
-import { Link, Outlet, useLocation } from 'react-router';
+import { Link, Outlet, useLocation, useOutletContext } from 'react-router';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Input } from '~/components/ui/input';
 import { SidebarGroupLabel, SidebarMenuButton, SidebarMenuItem } from '~/components/ui/sidebar';
@@ -27,10 +27,11 @@ const MENU = [
 
 export const SettingsModule = () => {
   const location = useLocation();
+  const outletContext = useOutletContext();
 
   return (
     <div className="flex min-h-screen gap-8">
-      <Card className='h-full w-72'>
+      <Card className='h-full w-72 flex-shrink-0'>
         <CardContent className=''>
           <SidebarGroupLabel>Settings</SidebarGroupLabel>
           <Input
@@ -52,13 +53,13 @@ export const SettingsModule = () => {
         </CardContent>
       </Card>
       {/* Main Content */}
-      <main className="flex-1">
-        <Card>
+      <main className="flex-1 min-w-0">
+        <Card >
           <CardHeader>
             <CardTitle>{MENU.find(m => location.pathname === m.route)?.label || 'Settings'}</CardTitle>
           </CardHeader>
-          <CardContent className=''>
-            <Outlet />
+          <CardContent className='overflow-hidden'>
+            <Outlet context={outletContext}/>
           </CardContent>
         </Card>
       </main>

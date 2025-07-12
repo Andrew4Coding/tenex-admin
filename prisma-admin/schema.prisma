@@ -73,7 +73,7 @@ model Verification {
 }
 
 model AllowedUser {
-  id String @id
+  id String @id @default(uuid())
 
   email String @unique
 
@@ -88,9 +88,9 @@ model AllowedUser {
 }
 
 model UserModelPermission {
-  id String @id
+  id String @id @default(uuid())
 
-  allowedUserId String      @unique
+  allowedUserId String      
   allowedUser   AllowedUser @relation(fields: [allowedUserId], references: [id], onDelete: Cascade)
 
   canCreate Boolean @default(false)

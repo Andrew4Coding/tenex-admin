@@ -231,7 +231,7 @@ export type AllowedUserScalarWhereWithAggregatesInput = {
 }
 
 export type AllowedUserCreateInput = {
-  id: string
+  id?: string
   email: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -240,7 +240,7 @@ export type AllowedUserCreateInput = {
 }
 
 export type AllowedUserUncheckedCreateInput = {
-  id: string
+  id?: string
   email: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -267,7 +267,7 @@ export type AllowedUserUncheckedUpdateInput = {
 }
 
 export type AllowedUserCreateManyInput = {
-  id: string
+  id?: string
   email: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -385,7 +385,7 @@ export type AllowedUserUpdateOneRequiredWithoutUserModelPermissionNestedInput = 
 }
 
 export type AllowedUserCreateWithoutUserInput = {
-  id: string
+  id?: string
   email: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -393,7 +393,7 @@ export type AllowedUserCreateWithoutUserInput = {
 }
 
 export type AllowedUserUncheckedCreateWithoutUserInput = {
-  id: string
+  id?: string
   email: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -438,7 +438,7 @@ export type AllowedUserScalarWhereInput = {
 }
 
 export type AllowedUserCreateWithoutUserModelPermissionInput = {
-  id: string
+  id?: string
   email: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -446,7 +446,7 @@ export type AllowedUserCreateWithoutUserModelPermissionInput = {
 }
 
 export type AllowedUserUncheckedCreateWithoutUserModelPermissionInput = {
-  id: string
+  id?: string
   email: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -486,7 +486,7 @@ export type AllowedUserUncheckedUpdateWithoutUserModelPermissionInput = {
 }
 
 export type AllowedUserCreateManyUserInput = {
-  id: string
+  id?: string
   email: string
   createdAt?: Date | string
   updatedAt?: Date | string
