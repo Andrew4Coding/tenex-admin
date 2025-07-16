@@ -6,3 +6,6 @@
 /build/
 
 .env
+
+/prisma/generated/
+/prisma-admin/generated/
