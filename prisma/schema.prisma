@@ -1,4 +1,3 @@
-
 generator client {
   provider      = "prisma-client"
   output        = "./generated"
@@ -90,7 +89,7 @@ model DashboardNotification {
   isPrivate                     Boolean                         @default(false)
   type                          PROGRAM_CODE
   DashboardNotificationUserRead DashboardNotificationUserRead[]
-  user                          user[]
+  user                          user[]                          @relation("DashboardNotificationTouser")
 }
 
 model DashboardNotificationUserRead {
@@ -139,6 +138,7 @@ model EventRegistration {
   Event                      Event                       @relation(fields: [eventId], references: [id])
   UserData                   UserData                    @relation(fields: [userId], references: [id], onDelete: Cascade)
   GrandLaunchingRegistration GrandLaunchingRegistration?
+  XcelerateRegistration      XcelerateRegistration?
 }
 
 model Exhibitor {
@@ -399,7 +399,7 @@ model Program {
   ProgramRegistration    ProgramRegistration[]
   SingleParticipant      SingleParticipant[]
   Team                   Team[]
-  ProgramTask            ProgramTask[]
+  ProgramTask            ProgramTask[]         @relation("ProgramToProgramTask")
 }
 
 model ProgramRegistration {
@@ -424,7 +424,7 @@ model ProgramTask {
   acceptedFileTypes           FILE_TYPE[]                   @default([ZIP])
   ProgramTaskExtraDescription ProgramTaskExtraDescription[]
   ProgramTaskSubmission       ProgramTaskSubmission[]
-  Program                     Program[]
+  Program                     Program[]                     @relation("ProgramToProgramTask")
 }
 
 model ProgramTaskExtraDescription {
@@ -628,7 +628,7 @@ model user {
   UserPlayground                UserPlayground?
   account                       account[]
   session                       session[]
-  DashboardNotification         DashboardNotification[]
+  DashboardNotification         DashboardNotification[]         @relation("DashboardNotificationTouser")
 }
 
 model verification {
@@ -638,6 +638,16 @@ model verification {
   createdAt  DateTime?
   expiresAt  DateTime
   updatedAt  DateTime?
+}
+
+model XcelerateRegistration {
+  id                  String            @id
+  eventRegistrationId String            @unique
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime
+  jobCategory         String
+  knowEventSource     KNOW_EVENT_SOURCE
+  EventRegistration   EventRegistration @relation(fields: [eventRegistrationId], references: [id], onDelete: Cascade)
 }
 
 enum ACADEMY_TYPE {
@@ -661,7 +671,8 @@ enum DETENTION_STATE {
 
 enum EVENT_TYPE {
   GRAND_LAUNCHING
-  XCELERATE
+  XCELERATE_SEMINAR
+  XCELERATE_WORKSHOP
   XCELERATE_FOUNDATION
   MAIN_EVENT
   COMPFEST_TALKS
