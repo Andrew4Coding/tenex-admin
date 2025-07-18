@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { prisma } from 'prisma/prisma';
 import { Loader, RefreshCcw } from 'lucide-react';
 import {
   isRouteErrorResponse,
@@ -30,7 +30,6 @@ export async function loader(
   }
 
   // List models from prisma psql
-  const prisma = new PrismaClient();
   const query: { table_name: string }[] =
     await prisma.$queryRaw`SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'`;
 
